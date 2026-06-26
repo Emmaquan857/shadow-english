@@ -43,6 +43,7 @@ nav .container { display: flex; align-items: center; height: 68px; gap: 28px; }
 }
 .nav-link:hover { color: #0F172A; background: rgba(0,0,0,0.04); }
 .nav-link.active { color: #08CCC8; background: rgba(8,204,200,0.06); }
+[data-zh] { cursor: help; }
 
 .section { padding: 72px 0; }
 .section-header { margin-bottom: 40px; }
@@ -214,7 +215,7 @@ footer p { font-size: 13px; color: #64748B; }
       <a class="nav-link active" href="#landing">Home</a>
       <a class="nav-link" href="#method">Method</a>
       <a class="nav-link" href="#resources">Resources</a>
-      <a class="nav-link" href="app.html" style="color:#08CCC8;background:rgba(8,204,200,0.06);font-weight:600;">Launch App →</a>
+      <a class="nav-link" href="app.html" target="_blank" style="color:#08CCC8;background:rgba(8,204,200,0.06);font-weight:600;">Launch App →</a>
     </div>
   </div>
 </nav>
@@ -228,7 +229,7 @@ footer p { font-size: 13px; color: #64748B; }
         <h1 data-zh="使用尚雯婕方法学习英语">Learn English with the <span class="grad" data-zh="尚雯婕方法">Shang Wenjie Method</span></h1>
         <p class="hero-sub" data-zh="10个精选材料·4个训练步骤·10个月让你的英语从犹豫到流利">10 curated materials · 4 training steps · 10 months to transform your English from hesitant to fluent.</p>
         <div class="hero-actions">
-          <a href="app.html" class="btn btn-primary btn-lg">Start Learning →</a>
+          <a href="app.html" target="_blank" class="btn btn-primary btn-lg">Start Learning →</a>
           <a href="#resources" class="btn btn-secondary btn-lg">Browse Resources</a>
         </div>
       </div>
@@ -604,11 +605,20 @@ footer p { font-size: 13px; color: #64748B; }
   }
   applyDict(document.body);
 
-  // nav highlight
-  document.querySelectorAll('.nav-link').forEach(l => l.addEventListener('click', function() {
-    document.querySelectorAll('.nav-link').forEach(x => x.classList.remove('active'));
-    this.classList.add('active');
-  }));
+  // nav highlight + smooth scroll for hash links
+  document.querySelectorAll('.nav-link').forEach(function(l) {
+    l.addEventListener('click', function(e) {
+      document.querySelectorAll('.nav-link').forEach(function(x) { x.classList.remove('active'); });
+      this.classList.add('active');
+      var href = this.getAttribute('href');
+      if (href && href.charAt(0) === '#') {
+        e.preventDefault();
+        var target = document.getElementById(href.slice(1));
+        if (target) target.scrollIntoView({ behavior: 'smooth' });
+        history.replaceState(null, '', href);
+      }
+    });
+  });
 })();
 
 (function() {
