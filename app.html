@@ -3,174 +3,223 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Shadow — App Dashboard</title>
+<title>Shadow — AI-Powered English Learning</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
+:root {
+  --primary: #08CCC8;
+  --primary-dark: #06B8B4;
+  --secondary: #0193F8;
+  --purple: #7C3AED;
+  --accent: #10B981;
+  --bg: #F0F4F8;
+  --surface: #FFFFFF;
+  --text: #0F172A;
+  --text-secondary: #475569;
+  --text-tertiary: #94A3B8;
+  --border: rgba(0,0,0,0.06);
+  --sidebar-w: 240px;
+  --nav-h: 56px;
+  --radius: 12px;
+  --radius-lg: 16px;
+}
+
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; }
 body {
   font-family: 'Inter', -apple-system, system-ui, sans-serif;
-  background: #F0F4F8; color: #0F172A; font-size: 16px; line-height: 1.7;
+  background: var(--bg); color: var(--text); font-size: 15px; line-height: 1.7;
   -webkit-font-smoothing: antialiased;
   -webkit-user-select: none; user-select: none;
 }
 img, a, button, input, textarea, [contenteditable] { -webkit-user-select: auto; user-select: auto; }
-body::after {
-  content: ''; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-  pointer-events: none; z-index: 999999; opacity: 0;
-  background: repeating-linear-gradient(0deg, transparent, transparent 40px, rgba(29,78,216,0.02) 40px, rgba(29,78,216,0.02) 41px);
-}
-.container { max-width: 1200px; margin: 0 auto; padding: 0 32px; }
 
-nav {
-  position: sticky; top: 0; z-index: 100;
-  background: rgba(248,250,252,0.8);
-  backdrop-filter: blur(16px) saturate(1.5);
-  border-bottom: 1px solid rgba(0,0,0,0.04);
+/* TOP NAV */
+.top-nav {
+  position: fixed; top: 0; left: 0; right: 0; height: var(--nav-h); z-index: 200;
+  background: rgba(255,255,255,0.85); backdrop-filter: blur(16px) saturate(1.5);
+  border-bottom: 1px solid var(--border); display: flex; align-items: center;
+  padding: 0 20px 0 24px; gap: 16px;
 }
-nav .container { display: flex; align-items: center; height: 68px; gap: 28px; }
-.nav-logo {
-  font-size: 20px; font-weight: 800; letter-spacing: -0.5px;
-  color: #0F172A; text-decoration: none; display: flex; align-items: center; gap: 8px;
-  flex-shrink: 0;
+.nav-logo { display: flex; align-items: center; gap: 8px; font-size: 18px; font-weight: 800; color: var(--text); text-decoration: none; flex-shrink: 0; }
+.nav-logo svg { width: 22px; height: 22px; }
+.nav-search { flex: 1; max-width: 360px; position: relative; }
+.nav-search input {
+  width: 100%; height: 36px; border-radius: 8px; border: 1px solid var(--border);
+  background: rgba(0,0,0,0.03); padding: 0 14px 0 36px; font-size: 13px; font-family: 'Inter', sans-serif;
+  outline: none; transition: all 0.2s;
 }
-.nav-logo svg { width: 24px; height: 24px; }
-.nav-links { display: flex; gap: 2px; }
-.nav-link {
-  font-size: 13px; font-weight: 500; color: #475569;
-  text-decoration: none; padding: 7px 14px; border-radius: 8px;
-  transition: all 0.2s; white-space: nowrap;
+.nav-search input:focus { border-color: var(--primary); background: #fff; box-shadow: 0 0 0 3px rgba(8,204,200,0.1); }
+.nav-search svg { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; color: var(--text-tertiary); }
+.nav-actions { display: flex; align-items: center; gap: 8px; margin-left: auto; }
+.nav-icon-btn {
+  width: 36px; height: 36px; border-radius: 8px; border: none; background: transparent;
+  display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s;
+  color: var(--text-secondary); font-size: 18px; position: relative;
 }
-.nav-link:hover { color: #0F172A; background: rgba(0,0,0,0.04); }
-.nav-link.active { color: #1D4ED8; background: rgba(29,78,216,0.06); }
+.nav-icon-btn:hover { background: rgba(0,0,0,0.04); }
+.nav-dot { position: absolute; top: 6px; right: 6px; width: 7px; height: 7px; border-radius: 50%; background: #EF4444; }
+.nav-avatar {
+  width: 32px; height: 32px; border-radius: 8px; background: linear-gradient(135deg, var(--primary), var(--secondary));
+  display: flex; align-items: center; justify-content: center; color: #fff; font-size: 12px; font-weight: 700; cursor: pointer;
+}
 
-.section { padding: 56px 0; }
-.section-header { margin-bottom: 32px; }
-.section-label {
-  font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
-  color: #1D4ED8; margin-bottom: 10px;
+/* SIDEBAR */
+.sidebar {
+  position: fixed; top: var(--nav-h); left: 0; bottom: 0; width: var(--sidebar-w); z-index: 100;
+  background: var(--surface); border-right: 1px solid var(--border);
+  display: flex; flex-direction: column; padding: 16px 12px;
 }
-.section-title {
-  font-size: 28px; font-weight: 700; letter-spacing: -0.5px;
-  color: #0F172A; line-height: 1.2;
+.si-group { font-size: 10px; font-weight: 600; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.08em; padding: 8px 12px 6px; margin-top: 8px; }
+.si-item {
+  display: flex; align-items: center; gap: 10px; padding: 9px 12px; border-radius: 8px;
+  text-decoration: none; color: var(--text-secondary); font-size: 13px; font-weight: 500;
+  transition: all 0.15s; cursor: pointer; position: relative;
+  border-left: 3px solid transparent;
 }
-.section-desc { font-size: 15px; line-height: 1.7; color: #475569; margin-top: 6px; }
+.si-item:hover { background: rgba(0,0,0,0.03); color: var(--text); }
+.si-item.active { background: rgba(8,204,200,0.06); color: var(--primary); border-left-color: var(--primary); font-weight: 600; }
+.si-item.locked { opacity: 0.4; cursor: not-allowed; }
+.si-icon { width: 20px; text-align: center; font-size: 16px; flex-shrink: 0; }
+.si-label { flex: 1; }
+.si-status { font-size: 10px; font-weight: 600; }
+.si-done { color: var(--accent); }
+.si-locked { color: var(--text-tertiary); font-size: 12px; }
 
+.sidebar-progress { margin-top: auto; padding: 12px; border-top: 1px solid var(--border); }
+.sp-label { font-size: 10px; font-weight: 600; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; }
+.sp-bar { height: 4px; border-radius: 4px; background: rgba(0,0,0,0.04); overflow: hidden; margin-bottom: 6px; }
+.sp-fill { height: 100%; border-radius: 4px; background: linear-gradient(90deg, var(--primary), var(--secondary)); transition: width 0.6s ease; }
+.sp-text { font-size: 11px; color: var(--text-tertiary); }
+
+/* MAIN */
+.main { margin-left: var(--sidebar-w); margin-top: var(--nav-h); min-height: calc(100vh - var(--nav-h)); }
+.section { padding: 32px 40px; display: none; }
+.section.active { display: block; }
+.section-hd { margin-bottom: 28px; }
+.section-label { font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--primary); margin-bottom: 6px; }
+.section-title { font-size: 26px; font-weight: 700; letter-spacing: -0.5px; color: var(--text); line-height: 1.2; }
+.section-desc { font-size: 14px; line-height: 1.6; color: var(--text-secondary); margin-top: 4px; }
+
+/* BUTTONS */
 .btn {
-  display: inline-flex; align-items: center; gap: 6px;
-  padding: 12px 28px; border-radius: 10px;
-  font-size: 14px; font-weight: 600; text-decoration: none;
+  display: inline-flex; align-items: center; gap: 6px; padding: 10px 24px; border-radius: 8px;
+  font-size: 13px; font-weight: 600; text-decoration: none;
   transition: all 0.2s; border: none; font-family: inherit; cursor: pointer;
 }
-.btn-primary { background: #1D4ED8; color: #fff; box-shadow: 0 1px 3px rgba(29,78,216,0.2); }
-.btn-primary:hover { background: #1E40AF; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(29,78,216,0.25); }
-.btn-secondary { background: transparent; color: #0F172A; border: 1px solid rgba(0,0,0,0.08); }
-.btn-secondary:hover { background: rgba(0,0,0,0.04); border-color: rgba(0,0,0,0.12); }
-.btn-lg { padding: 14px 32px; font-size: 14px; border-radius: 12px; }
+.btn-primary { background: var(--primary); color: #fff; }
+.btn-primary:hover { background: var(--primary-dark); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(8,204,200,0.25); }
+.btn-secondary { background: transparent; color: var(--text); border: 1px solid var(--border); }
+.btn-secondary:hover { background: rgba(0,0,0,0.04); border-color: rgba(0,0,0,0.1); }
+.btn-lg { padding: 14px 32px; font-size: 14px; border-radius: 10px; }
 
 .badge {
-  display: inline-flex; align-items: center; gap: 6px;
-  padding: 5px 14px 5px 6px; border-radius: 100px;
-  background: rgba(29,78,216,0.06); color: #1D4ED8;
-  font-size: 11px; font-weight: 600; border: 1px solid rgba(29,78,216,0.08);
+  display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px 4px 5px; border-radius: 100px;
+  background: rgba(8,204,200,0.06); color: var(--primary); font-size: 11px; font-weight: 600; border: 1px solid rgba(8,204,200,0.08);
 }
-.badge-dot { width: 6px; height: 6px; border-radius: 50%; background: #1D4ED8; }
+.badge-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--primary); }
 
-/* DASHBOARD LAYOUT */
-.dash-top { margin-bottom: 24px; }
+/* FOCUS CARD */
 .focus-card {
-  background: linear-gradient(135deg, #1D4ED8 0%, #7C3AED 100%);
-  border-radius: 18px; padding: 32px 36px; color: #fff;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+  border-radius: var(--radius-lg); padding: 32px 36px; color: #fff;
   display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap;
-  box-shadow: 0 8px 32px rgba(29,78,216,0.2);
+  box-shadow: 0 8px 32px rgba(8,204,200,0.2);
 }
 .focus-left { flex: 1; min-width: 200px; }
 .focus-label { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; opacity: 0.7; margin-bottom: 4px; }
-.focus-title { font-size: 22px; font-weight: 800; margin-bottom: 2px; letter-spacing: -0.3px; }
+.focus-title { font-size: 20px; font-weight: 800; margin-bottom: 2px; letter-spacing: -0.3px; }
 .focus-sub { font-size: 13px; opacity: 0.8; margin-bottom: 12px; }
 .focus-progress { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
 .focus-track { flex: 1; height: 4px; border-radius: 4px; background: rgba(255,255,255,0.2); overflow: hidden; max-width: 200px; }
 .focus-fill { height: 100%; border-radius: 4px; background: #fff; transition: width 0.6s ease; }
 .focus-pct { font-size: 14px; font-weight: 700; }
-.focus-right { flex-shrink: 0; }
-.focus-right .btn { background: #fff; color: #1D4ED8; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-.focus-right .btn:hover { background: #f0f0f0; transform: translateY(-1px); }
+.focus-right .btn { background: #fff; color: var(--primary); box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+.focus-right .btn:hover { background: #f0f0f0; }
 
-.dash-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 32px; }
-.dash-card { background: #fff; border-radius: 16px; border: 1px solid rgba(0,0,0,0.04); box-shadow: 0 1px 3px rgba(0,0,0,0.02); overflow: hidden; }
-.dash-card-hd { display: flex; align-items: center; justify-content: space-between; padding: 18px 24px; border-bottom: 1px solid rgba(0,0,0,0.04); }
-.dash-card-title { font-size: 15px; font-weight: 700; color: #0F172A; }
-.dash-card-body { padding: 24px; }
+.dash-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 24px; }
+.dash-card { background: var(--surface); border-radius: var(--radius-lg); border: 1px solid var(--border); box-shadow: 0 1px 3px rgba(0,0,0,0.02); overflow: hidden; }
+.dash-card-hd { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-bottom: 1px solid var(--border); }
+.dash-card-title { font-size: 14px; font-weight: 700; color: var(--text); }
 .dash-card-body { padding: 20px; }
 
 .mission-item { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid rgba(0,0,0,0.03); cursor: pointer; transition: all 0.2s; }
 .mission-item:last-child { border: none; }
 .mission-item:hover { opacity: 0.7; }
 .mission-cb { width: 18px; height: 18px; border-radius: 50%; border: 2px solid #CBD5E1; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.2s; font-size: 9px; color: transparent; }
-.mission-item.done .mission-cb { background: #10B981; border-color: #10B981; color: #fff; }
-.mission-item.current .mission-cb { border-color: #1D4ED8; }
-.mission-item .mission-cb::after { content: ''; }
+.mission-item.done .mission-cb { background: var(--accent); border-color: var(--accent); color: #fff; }
+.mission-item.current .mission-cb { border-color: var(--primary); }
 .mission-item.done .mission-cb::after { content: '✓'; }
-.mission-label { flex: 1; font-size: 12px; color: #475569; }
-.mission-item.done .mission-label { text-decoration: line-through; color: #94A3B8; }
-.mission-time { font-size: 11px; color: #94A3B8; }
+.mission-label { flex: 1; font-size: 13px; color: var(--text-secondary); }
+.mission-item.done .mission-label { text-decoration: line-through; color: var(--text-tertiary); }
+.mission-time { font-size: 11px; color: var(--text-tertiary); }
 
-.stats-row { display: flex; gap: 20px; flex-wrap: wrap; }
+.stats-row { display: flex; gap: 24px; flex-wrap: wrap; }
 .stat-item { flex: 1; min-width: 80px; }
-.stat-item-label { font-size: 11px; color: #94A3B8; font-weight: 500; margin-bottom: 4px; }
-.stat-item-value { font-size: 20px; font-weight: 800; color: #0F172A; }
-.stat-item-sub { font-size: 10px; color: #94A3B8; margin-top: 1px; }
+.stat-item-label { font-size: 11px; color: var(--text-tertiary); font-weight: 500; margin-bottom: 4px; }
+.stat-item-value { font-size: 22px; font-weight: 800; color: var(--text); }
+.stat-item-sub { font-size: 11px; color: var(--accent); margin-top: 1px; }
 .streak-bar { display: flex; gap: 6px; margin-top: 14px; }
-.streak-day { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 600; color: #94A3B8; background: rgba(0,0,0,0.03); }
-.streak-day.active { background: rgba(29,78,216,0.08); color: #1D4ED8; }
+.streak-day { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 600; color: var(--text-tertiary); background: rgba(0,0,0,0.03); }
+.streak-day.active { background: rgba(8,204,200,0.08); color: var(--primary); }
 .streak-day.miss { background: rgba(0,0,0,0.02); color: #CBD5E1; }
-.streak-day.today { border: 2px solid #1D4ED8; }
+.streak-day.today { border: 2px solid var(--primary); }
 
 .activity-item { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid rgba(0,0,0,0.03); }
 .activity-item:last-child { border: none; }
 .activity-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
-.ad-blue { background: #1D4ED8; } .ad-purple { background: #7C3AED; } .ad-green { background: #10B981; } .ad-amber { background: #F59E0B; }
-.activity-text { flex: 1; font-size: 12px; color: #475569; }
-.activity-text strong { font-weight: 600; color: #0F172A; }
-.activity-time { font-size: 11px; color: #94A3B8; white-space: nowrap; }
+.ad-primary { background: var(--primary); } .ad-secondary { background: var(--secondary); } .ad-purple { background: var(--purple); } .ad-accent { background: var(--accent); }
+.activity-text { flex: 1; font-size: 12px; color: var(--text-secondary); }
+.activity-text strong { font-weight: 600; color: var(--text); }
+.activity-time { font-size: 11px; color: var(--text-tertiary); }
+
+/* DAILY INPUT */
+.input-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
+.input-card { background: var(--surface); border-radius: var(--radius); padding: 20px; border: 1px solid var(--border); transition: all 0.2s; cursor: pointer; }
+.input-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.04); transform: translateY(-2px); border-color: rgba(8,204,200,0.1); }
+.input-emoji { font-size: 28px; margin-bottom: 8px; }
+.input-name { font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 2px; }
+.input-meta { font-size: 11px; color: var(--text-tertiary); margin-bottom: 8px; }
+.input-desc { font-size: 12px; line-height: 1.6; color: var(--text-secondary); }
+.input-tag { display: inline-block; font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: 4px; background: rgba(8,204,200,0.06); color: var(--primary); margin: 6px 2px 0 0; }
 
 /* STUDIO */
-.studio-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 28px; }
-.studio-player { background: #fff; border-radius: 14px; border: 1px solid rgba(0,0,0,0.04); box-shadow: 0 1px 3px rgba(0,0,0,0.02); padding: 28px; }
+.studio-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.studio-player { background: var(--surface); border-radius: var(--radius-lg); border: 1px solid var(--border); box-shadow: 0 1px 3px rgba(0,0,0,0.02); padding: 28px; }
 .player-info { margin-bottom: 20px; }
-.player-title { font-size: 16px; font-weight: 700; color: #0F172A; margin-bottom: 4px; }
-.player-meta { font-size: 11px; color: #94A3B8; display: flex; gap: 12px; }
+.player-title { font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+.player-meta { font-size: 11px; color: var(--text-tertiary); display: flex; gap: 12px; }
 .player-waveform { width: 100%; height: 100px; border-radius: 10px; background: rgba(0,0,0,0.02); margin-bottom: 16px; display: flex; align-items: center; gap: 3px; padding: 0 12px; }
-.wf-bar { width: 4px; border-radius: 4px; background: #1D4ED8; opacity: 0.15; }
+.wf-bar { width: 4px; border-radius: 4px; background: var(--primary); opacity: 0.15; }
 .wf-bar.active { opacity: 0.4; }
-.wf-bar.now { opacity: 0.8; background: linear-gradient(180deg, #1D4ED8, #7C3AED); }
+.wf-bar.now { opacity: 0.8; background: linear-gradient(180deg, var(--primary), var(--secondary)); }
 .player-controls { display: flex; align-items: center; gap: 14px; }
-.ctrl-btn { width: 40px; height: 40px; border-radius: 50%; border: none; background: #1D4ED8; color: #fff; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; font-size: 16px; }
-.ctrl-btn:hover { background: #1E40AF; }
-.ctrl-btn-sm { width: 32px; height: 32px; border-radius: 50%; border: 1px solid rgba(0,0,0,0.06); background: transparent; color: #64748B; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; font-size: 12px; }
+.ctrl-btn { width: 40px; height: 40px; border-radius: 50%; border: none; background: var(--primary); color: #fff; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; font-size: 16px; }
+.ctrl-btn:hover { background: var(--primary-dark); }
+.ctrl-btn-sm { width: 32px; height: 32px; border-radius: 50%; border: 1px solid var(--border); background: transparent; color: var(--text-secondary); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; font-size: 12px; }
 .ctrl-btn-sm:hover { background: rgba(0,0,0,0.04); }
 .ctrl-progress { flex: 1; }
-.ctrl-time { display: flex; justify-content: space-between; font-size: 10px; color: #94A3B8; font-weight: 500; margin-bottom: 4px; }
+.ctrl-time { display: flex; justify-content: space-between; font-size: 10px; color: var(--text-tertiary); font-weight: 500; margin-bottom: 4px; }
 .ctrl-track { width: 100%; height: 4px; border-radius: 4px; background: rgba(0,0,0,0.06); appearance: none; outline: none; }
-.ctrl-track::-webkit-slider-thumb { appearance: none; width: 12px; height: 12px; border-radius: 50%; background: #1D4ED8; cursor: pointer; border: 2px solid #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+.ctrl-track::-webkit-slider-thumb { appearance: none; width: 12px; height: 12px; border-radius: 50%; background: var(--primary); cursor: pointer; border: 2px solid #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
 .player-modes { display: flex; gap: 6px; margin-top: 16px; flex-wrap: wrap; }
-.mode-chip { padding: 5px 14px; border-radius: 8px; font-size: 11px; font-weight: 600; border: 1px solid rgba(0,0,0,0.06); background: transparent; color: #64748B; cursor: pointer; transition: all 0.2s; }
-.mode-chip:hover { border-color: rgba(0,0,0,0.1); color: #0F172A; }
-.mode-chip.active { background: rgba(29,78,216,0.06); border-color: rgba(29,78,216,0.12); color: #1D4ED8; }
+.mode-chip { padding: 5px 14px; border-radius: 8px; font-size: 11px; font-weight: 600; border: 1px solid var(--border); background: transparent; color: var(--text-secondary); cursor: pointer; transition: all 0.2s; }
+.mode-chip:hover { border-color: rgba(0,0,0,0.1); color: var(--text); }
+.mode-chip.active { background: rgba(8,204,200,0.06); border-color: rgba(8,204,200,0.12); color: var(--primary); }
 
-.studio-tabs { background: #fff; border-radius: 14px; border: 1px solid rgba(0,0,0,0.04); box-shadow: 0 1px 3px rgba(0,0,0,0.02); overflow: hidden; }
-.st-tab-bar { display: flex; border-bottom: 1px solid rgba(0,0,0,0.04); }
-.st-tab { padding: 12px 20px; font-size: 12px; font-weight: 600; color: #64748B; cursor: pointer; transition: all 0.2s; border: none; background: transparent; font-family: inherit; border-bottom: 2px solid transparent; }
-.st-tab:hover { color: #0F172A; }
-.st-tab.active { color: #1D4ED8; border-bottom-color: #1D4ED8; background: rgba(29,78,216,0.03); }
+.studio-tabs { background: var(--surface); border-radius: var(--radius-lg); border: 1px solid var(--border); box-shadow: 0 1px 3px rgba(0,0,0,0.02); overflow: hidden; }
+.st-tab-bar { display: flex; border-bottom: 1px solid var(--border); }
+.st-tab { padding: 12px 20px; font-size: 12px; font-weight: 600; color: var(--text-secondary); cursor: pointer; transition: all 0.2s; border: none; background: transparent; font-family: inherit; border-bottom: 2px solid transparent; }
+.st-tab:hover { color: var(--text); }
+.st-tab.active { color: var(--primary); border-bottom-color: var(--primary); background: rgba(8,204,200,0.03); }
 .st-panel { display: none; padding: 24px; }
 .st-panel.active { display: block; }
 .transcript-line { padding: 6px 8px; border-radius: 6px; transition: all 0.2s; }
 .transcript-line:hover { background: rgba(0,0,0,0.02); }
-.transcript-line.active { background: rgba(29,78,216,0.04); }
+.transcript-line.active { background: rgba(8,204,200,0.04); }
 .tl-en { font-size: 13px; line-height: 1.8; color: #334155; }
-.tl-cn { font-size: 11px; color: #94A3B8; }
-.tact { padding: 5px 12px; border-radius: 6px; font-size: 11px; font-weight: 600; border: 1px solid rgba(0,0,0,0.06); background: transparent; color: #64748B; cursor: pointer; transition: all 0.2s; }
+.tl-cn { font-size: 11px; color: var(--text-tertiary); }
+.tact { padding: 5px 12px; border-radius: 6px; font-size: 11px; font-weight: 600; border: 1px solid var(--border); background: transparent; color: var(--text-secondary); cursor: pointer; transition: all 0.2s; }
 .tact:hover { background: rgba(0,0,0,0.04); }
 .tact-record { background: rgba(239,68,68,0.06); border-color: rgba(239,68,68,0.1); color: #EF4444; }
 .tact-record:hover { background: rgba(239,68,68,0.1); }
@@ -182,786 +231,709 @@ nav .container { display: flex; align-items: center; height: 68px; gap: 28px; }
 .feedback-card { padding: 14px 16px; border-radius: 10px; background: rgba(0,0,0,0.02); border: 1px solid rgba(0,0,0,0.03); margin-bottom: 10px; }
 .fb-head { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
 .fb-icon { font-size: 16px; }
-.fb-type { font-size: 11px; font-weight: 600; color: #0F172A; }
-.fb-detail { font-size: 11px; color: #64748B; line-height: 1.6; }
-.fb-ok { border-left: 3px solid #10B981; }
+.fb-type { font-size: 11px; font-weight: 600; color: var(--text); }
+.fb-detail { font-size: 11px; color: var(--text-secondary); line-height: 1.6; }
+.fb-ok { border-left: 3px solid var(--accent); }
 .fb-improve { border-left: 3px solid #F59E0B; }
 .fb-error { border-left: 3px solid #EF4444; }
 
-/* PROGRESS */
-.progress-overview { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; margin-bottom: 24px; }
-.chart-card { background: #fff; border-radius: 14px; border: 1px solid rgba(0,0,0,0.04); box-shadow: 0 1px 3px rgba(0,0,0,0.02); padding: 28px; }
-.chart-title { font-size: 16px; font-weight: 700; color: #0F172A; margin-bottom: 4px; }
-.chart-sub { font-size: 12px; color: #94A3B8; margin-bottom: 20px; }
-.chart-bars { display: flex; align-items: flex-end; gap: 6px; height: 140px; }
-.chart-bar { flex: 1; border-radius: 4px 4px 0 0; background: linear-gradient(180deg, #1D4ED8, #7C3AED); opacity: 0.15; min-height: 8px; transition: all 0.3s; position: relative; }
-.chart-bar.active { opacity: 0.6; }
-.chart-bar .cb-label { position: absolute; bottom: -18px; left: 50%; transform: translateX(-50%); font-size: 9px; color: #94A3B8; white-space: nowrap; }
-.level-card { background: #fff; border-radius: 14px; border: 1px solid rgba(0,0,0,0.04); box-shadow: 0 1px 3px rgba(0,0,0,0.02); padding: 28px; display: flex; flex-direction: column; justify-content: center; }
-.level-badge { display: inline-flex; padding: 3px 10px; border-radius: 6px; background: rgba(29,78,216,0.06); color: #1D4ED8; font-size: 10px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 10px; width: fit-content; }
-.level-current { font-size: 32px; font-weight: 800; color: #0F172A; margin-bottom: 2px; }
-.level-current span { color: #1D4ED8; }
-.level-next { font-size: 12px; color: #94A3B8; margin-bottom: 14px; }
-.level-track { width: 100%; height: 6px; border-radius: 6px; background: rgba(0,0,0,0.04); overflow: hidden; }
-.level-fill { height: 100%; border-radius: 6px; background: linear-gradient(90deg, #1D4ED8, #7C3AED); transition: width 0.6s ease; }
+/* OUTPUT */
+.out-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
+.out-card { background: var(--surface); border-radius: var(--radius); padding: 24px; border: 1px solid var(--border); text-align: center; transition: all 0.2s; }
+.out-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.04); transform: translateY(-2px); }
+.out-icon { width: 48px; height: 48px; border-radius: 50%; margin: 0 auto 12px; display: flex; align-items: center; justify-content: center; font-size: 22px; }
+.out-title { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+.out-desc { font-size: 12px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 14px; }
 
-.milestone-path { display: flex; align-items: center; gap: 4px; margin-bottom: 24px; padding: 20px; background: #fff; border-radius: 14px; border: 1px solid rgba(0,0,0,0.04); overflow-x: auto; }
+/* PROGRESS - MILESTONE */
+.milestone-path { display: flex; align-items: center; gap: 4px; margin-bottom: 24px; padding: 20px; background: var(--surface); border-radius: var(--radius-lg); border: 1px solid var(--border); overflow-x: auto; }
 .mp-item { display: flex; flex-direction: column; align-items: center; gap: 6px; flex-shrink: 0; }
 .mp-circle { width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; transition: all 0.3s; }
-.mp-done .mp-circle { background: rgba(16,185,129,0.1); color: #10B981; border: 2px solid #10B981; }
-.mp-current .mp-circle { background: #1D4ED8; color: #fff; box-shadow: 0 0 0 4px rgba(29,78,216,0.15); }
+.mp-done .mp-circle { background: rgba(16,185,129,0.1); color: var(--accent); border: 2px solid var(--accent); }
+.mp-current .mp-circle { background: var(--primary); color: #fff; box-shadow: 0 0 0 4px rgba(8,204,200,0.15); }
 .mp-locked .mp-circle { background: rgba(0,0,0,0.03); color: #CBD5E1; border: 2px solid rgba(0,0,0,0.06); }
-.mp-label { font-size: 10px; font-weight: 600; color: #64748B; }
-.mp-done .mp-label { color: #10B981; }
-.mp-current .mp-label { color: #1D4ED8; }
-.mp-connector { flex: 1; height: 2px; background: rgba(0,0,0,0.06); min-width: 24px; position: relative; }
-.mp-connector.filled { background: #10B981; }
-.mp-connector.half { background: linear-gradient(90deg, #10B981 50%, rgba(0,0,0,0.06) 50%); }
+.mp-label { font-size: 10px; font-weight: 600; color: var(--text-secondary); }
+.mp-done .mp-label { color: var(--accent); }
+.mp-current .mp-label { color: var(--primary); }
+.mp-connector { flex: 1; height: 2px; background: rgba(0,0,0,0.06); min-width: 24px; }
+.mp-connector.filled { background: var(--accent); }
+.mp-connector.half { background: linear-gradient(90deg, var(--accent) 50%, rgba(0,0,0,0.06) 50%); }
+
+.progress-overview { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; margin-bottom: 24px; }
+.chart-card { background: var(--surface); border-radius: var(--radius-lg); border: 1px solid var(--border); box-shadow: 0 1px 3px rgba(0,0,0,0.02); padding: 28px; }
+.chart-title { font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+.chart-sub { font-size: 12px; color: var(--text-tertiary); margin-bottom: 20px; }
+.chart-bars { display: flex; align-items: flex-end; gap: 6px; height: 140px; }
+.chart-bar { flex: 1; border-radius: 4px 4px 0 0; background: linear-gradient(180deg, var(--primary), var(--secondary)); opacity: 0.15; min-height: 8px; transition: all 0.3s; position: relative; }
+.chart-bar.active { opacity: 0.6; }
+.chart-bar .cb-label { position: absolute; bottom: -18px; left: 50%; transform: translateX(-50%); font-size: 9px; color: var(--text-tertiary); white-space: nowrap; }
+.level-card { background: var(--surface); border-radius: var(--radius-lg); border: 1px solid var(--border); box-shadow: 0 1px 3px rgba(0,0,0,0.02); padding: 28px; display: flex; flex-direction: column; justify-content: center; }
+.level-badge { display: inline-flex; padding: 3px 10px; border-radius: 6px; background: rgba(8,204,200,0.06); color: var(--primary); font-size: 10px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 10px; width: fit-content; }
+.level-current { font-size: 32px; font-weight: 800; color: var(--text); margin-bottom: 2px; }
+.level-current span { color: var(--primary); }
+.level-next { font-size: 12px; color: var(--text-tertiary); margin-bottom: 14px; }
+.level-track { width: 100%; height: 6px; border-radius: 6px; background: rgba(0,0,0,0.04); overflow: hidden; }
+.level-fill { height: 100%; border-radius: 6px; background: linear-gradient(90deg, var(--primary), var(--secondary)); transition: width 0.6s ease; }
 
 .ms-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 28px; }
-.ms-card { background: #fff; border-radius: 12px; padding: 20px; border: 1px solid rgba(0,0,0,0.04); box-shadow: 0 1px 3px rgba(0,0,0,0.02); text-align: center; transition: all 0.3s; }
+.ms-card { background: var(--surface); border-radius: 12px; padding: 20px; border: 1px solid var(--border); box-shadow: 0 1px 3px rgba(0,0,0,0.02); text-align: center; transition: all 0.3s; }
 .ms-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.04); }
 .ms-icon { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 10px; font-size: 16px; }
 .msi-locked { background: rgba(0,0,0,0.03); color: #CBD5E1; }
-.msi-done { background: rgba(16,185,129,0.08); color: #10B981; }
-.msi-current { background: rgba(29,78,216,0.08); color: #1D4ED8; box-shadow: 0 0 0 3px rgba(29,78,216,0.08); }
-.ms-card-title { font-size: 13px; font-weight: 600; color: #0F172A; margin-bottom: 4px; }
-.ms-card-desc { font-size: 11px; color: #94A3B8; line-height: 1.5; }
+.msi-done { background: rgba(16,185,129,0.08); color: var(--accent); }
+.msi-current { background: rgba(8,204,200,0.08); color: var(--primary); box-shadow: 0 0 0 3px rgba(8,204,200,0.08); }
+.ms-card-title { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+.ms-card-desc { font-size: 11px; color: var(--text-tertiary); line-height: 1.5; }
 
-/* PLANNER */
+/* GRID */
 .grid-cols-6 { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; }
 .cefr-step { padding: 16px 12px; border-radius: 12px; text-align: center; cursor: pointer; transition: all 0.3s; border: 1px solid transparent; }
 .cefr-step:hover { transform: translateY(-2px); }
 .cefr-step-label { font-size: 18px; font-weight: 800; letter-spacing: 0.5px; }
 .cefr-step-name { font-size: 10px; font-weight: 500; margin-top: 2px; opacity: 0.6; }
 .cefr-step-stat { font-size: 10px; font-weight: 400; margin-top: 2px; opacity: 0.4; }
-.cefr-step .vb { display: inline-block; margin-top: 4px; font-size: 9px; font-weight: 600; padding: 2px 6px; border-radius: 4px; background: rgba(0,0,0,0.03); color: #94A3B8; }
+.cefr-step .vb { display: inline-block; margin-top: 4px; font-size: 9px; font-weight: 600; padding: 2px 6px; border-radius: 4px; background: rgba(0,0,0,0.03); color: var(--text-tertiary); }
 .cefr-step:not(.reached) { opacity: 0.35; }
 .cefr-step:not(.reached):hover { opacity: 0.55; }
 .cstep-a1 { background: rgba(239,68,68,0.04); border-color: rgba(239,68,68,0.06); } .cstep-a1 .cefr-step-label { color: #EF4444; } .cstep-a1.reached { border-color: rgba(239,68,68,0.15); }
 .cstep-a2 { background: rgba(249,115,22,0.04); border-color: rgba(249,115,22,0.06); } .cstep-a2 .cefr-step-label { color: #F97316; } .cstep-a2.reached { border-color: rgba(249,115,22,0.15); }
 .cstep-b1 { background: rgba(234,179,8,0.04); border-color: rgba(234,179,8,0.06); } .cstep-b1 .cefr-step-label { color: #EAB308; } .cstep-b1.reached { border-color: rgba(234,179,8,0.15); }
-.cstep-b2 { background: rgba(16,185,129,0.04); border-color: rgba(16,185,129,0.06); } .cstep-b2 .cefr-step-label { color: #10B981; } .cstep-b2.reached { border-color: rgba(16,185,129,0.15); }
+.cstep-b2 { background: rgba(16,185,129,0.04); border-color: rgba(16,185,129,0.06); } .cstep-b2 .cefr-step-label { color: var(--accent); } .cstep-b2.reached { border-color: rgba(16,185,129,0.15); }
 .cstep-c1 { background: rgba(56,189,248,0.04); border-color: rgba(56,189,248,0.06); } .cstep-c1 .cefr-step-label { color: #38BDF8; } .cstep-c1.reached { border-color: rgba(56,189,248,0.15); }
-.cstep-c2 { background: rgba(124,58,237,0.04); border-color: rgba(124,58,237,0.06); } .cstep-c2 .cefr-step-label { color: #7C3AED; } .cstep-c2.reached { border-color: rgba(124,58,237,0.15); }
-.cefr-target { font-size: 12px; color: #94A3B8; text-align: center; margin-bottom: 20px; }
-.cefr-target span { color: #1D4ED8; font-weight: 600; }
+.cstep-c2 { background: rgba(124,58,237,0.04); border-color: rgba(124,58,237,0.06); } .cstep-c2 .cefr-step-label { color: var(--purple); } .cstep-c2.reached { border-color: rgba(124,58,237,0.15); }
 
-.table-wrap { overflow-x: auto; border-radius: 12px; border: 1px solid rgba(0,0,0,0.04); margin-bottom: 28px; }
+.cefr-target { font-size: 12px; color: var(--text-tertiary); text-align: center; margin-bottom: 20px; }
+.cefr-target span { color: var(--primary); font-weight: 600; }
+.table-wrap { overflow-x: auto; border-radius: 12px; border: 1px solid var(--border); margin-bottom: 28px; }
 .table-wrap table { width: 100%; border-collapse: collapse; font-size: 12px; }
-.table-wrap th { text-align: left; padding: 10px 14px; font-weight: 600; font-size: 11px; color: #94A3B8; background: rgba(0,0,0,0.02); border-bottom: 1px solid rgba(0,0,0,0.04); text-transform: uppercase; letter-spacing: 0.05em; }
-.table-wrap td { padding: 10px 14px; border-bottom: 1px solid rgba(0,0,0,0.03); color: #64748B; }
+.table-wrap th { text-align: left; padding: 10px 14px; font-weight: 600; font-size: 11px; color: var(--text-tertiary); background: rgba(0,0,0,0.02); border-bottom: 1px solid var(--border); text-transform: uppercase; letter-spacing: 0.05em; }
+.table-wrap td { padding: 10px 14px; border-bottom: 1px solid rgba(0,0,0,0.03); color: var(--text-secondary); }
 .table-wrap tr:hover td { background: rgba(0,0,0,0.02); }
-.table-wrap td:first-child { font-weight: 700; color: #0F172A; }
-.table-wrap .hl td { background: rgba(29,78,216,0.03); }
+.table-wrap td:first-child { font-weight: 700; color: var(--text); }
+.table-wrap .hl td { background: rgba(8,204,200,0.03); }
 
 .plan-tabs { display: flex; gap: 8px; margin-bottom: 24px; flex-wrap: wrap; }
-.plan-tab { padding: 8px 18px; border-radius: 8px; font-size: 12px; font-weight: 600; border: 1px solid rgba(0,0,0,0.06); background: transparent; color: #64748B; cursor: pointer; transition: all 0.2s; }
-.plan-tab:hover { border-color: rgba(0,0,0,0.1); color: #0F172A; }
-.plan-tab.active { background: rgba(29,78,216,0.06); border-color: rgba(29,78,216,0.12); color: #1D4ED8; }
+.plan-tab { padding: 8px 18px; border-radius: 8px; font-size: 12px; font-weight: 600; border: 1px solid var(--border); background: transparent; color: var(--text-secondary); cursor: pointer; transition: all 0.2s; }
+.plan-tab:hover { border-color: rgba(0,0,0,0.1); color: var(--text); }
+.plan-tab.active { background: rgba(8,204,200,0.06); border-color: rgba(8,204,200,0.12); color: var(--primary); }
 .plan-panel { display: none; }
 .plan-panel.active { display: block; }
 .plan-viz { display: flex; gap: 24px; margin-bottom: 24px; flex-wrap: wrap; }
 .plan-viz-item { flex: 1; min-width: 140px; }
-.plan-viz-label { font-size: 10px; color: #94A3B8; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; font-weight: 600; }
-.plan-viz-value { font-size: 26px; font-weight: 800; color: #0F172A; }
-.plan-viz-sub { font-size: 11px; color: #94A3B8; }
-.pv-blue .plan-viz-value { color: #1D4ED8; }
-.pv-purple .plan-viz-value { color: #7C3AED; }
-.pv-green .plan-viz-value { color: #10B981; }
+.plan-viz-label { font-size: 10px; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; font-weight: 600; }
+.plan-viz-value { font-size: 26px; font-weight: 800; color: var(--text); }
+.plan-viz-sub { font-size: 11px; color: var(--text-tertiary); }
+.pv-blue .plan-viz-value { color: var(--secondary); }
+.pv-purple .plan-viz-value { color: var(--purple); }
+.pv-green .plan-viz-value { color: var(--accent); }
 .pv-amber .plan-viz-value { color: #F59E0B; }
 .plan-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; margin-bottom: 24px; }
-.plan-card { background: #fff; border-radius: 14px; padding: 24px; border: 1px solid rgba(0,0,0,0.04); box-shadow: 0 1px 3px rgba(0,0,0,0.02); transition: all 0.3s; }
+.plan-card { background: var(--surface); border-radius: var(--radius); padding: 24px; border: 1px solid var(--border); box-shadow: 0 1px 3px rgba(0,0,0,0.02); transition: all 0.3s; }
 .plan-card:hover { box-shadow: 0 8px 24px rgba(0,0,0,0.06); transform: translateY(-2px); border-color: rgba(0,0,0,0.06); }
 .plan-card-icon { font-size: 24px; margin-bottom: 8px; }
-.plan-card-title { font-size: 16px; font-weight: 700; color: #0F172A; margin-bottom: 2px; }
-.plan-card-sub { font-size: 11px; color: #94A3B8; margin-bottom: 12px; }
+.plan-card-title { font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: 2px; }
+.plan-card-sub { font-size: 11px; color: var(--text-tertiary); margin-bottom: 12px; }
 .plan-card .pt { height: 4px; border-radius: 4px; background: rgba(0,0,0,0.04); margin-bottom: 12px; overflow: hidden; }
 .plan-card .pf { height: 100%; border-radius: 4px; transition: width 1s ease; }
 .pc-s .pf { background: linear-gradient(90deg, #EF4444, #F97316); }
 .pc-f .pf { background: linear-gradient(90deg, #F97316, #EAB308); }
-.pc-i .pf { background: linear-gradient(90deg, #EAB308, #10B981); }
-.pc-a .pf { background: linear-gradient(90deg, #10B981, #38BDF8); }
+.pc-i .pf { background: linear-gradient(90deg, #EAB308, var(--accent)); }
+.pc-a .pf { background: linear-gradient(90deg, var(--accent), #38BDF8); }
 .pills { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 10px; }
-.pill { font-size: 9px; font-weight: 600; padding: 2px 8px; border-radius: 4px; background: rgba(0,0,0,0.03); color: #64748B; }
-.pill.goal { background: rgba(29,78,216,0.06); color: #1D4ED8; }
-.plan-card-plan { font-size: 12px; line-height: 1.7; color: #64748B; }
+.pill { font-size: 9px; font-weight: 600; padding: 2px 8px; border-radius: 4px; background: rgba(0,0,0,0.03); color: var(--text-secondary); }
+.pill.goal { background: rgba(8,204,200,0.06); color: var(--primary); }
+.plan-card-plan { font-size: 12px; line-height: 1.7; color: var(--text-secondary); }
 
 /* CARDS */
 .card {
-  background: #fff; border-radius: 16px; padding: 28px;
-  border: 1px solid rgba(0,0,0,0.04);
-  box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+  background: var(--surface); border-radius: var(--radius); padding: 24px;
+  border: 1px solid var(--border); box-shadow: 0 1px 3px rgba(0,0,0,0.02);
   transition: all 0.3s;
 }
 .card:hover { box-shadow: 0 8px 24px rgba(0,0,0,0.06); transform: translateY(-2px); border-color: rgba(0,0,0,0.06); }
-.card-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 14px; }
-.card-emoji { width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; background: rgba(0,0,0,0.03); flex-shrink: 0; }
-.card-rank { font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 6px; }
-.cr-1 { background: rgba(29,78,216,0.06); color: #1D4ED8; }
-.cr-2 { background: rgba(124,58,237,0.06); color: #7C3AED; }
-.cr-3 { background: rgba(16,185,129,0.06); color: #10B981; }
-.cr- { background: rgba(0,0,0,0.03); color: #64748B; }
-.card-name { font-size: 18px; font-weight: 700; color: #0F172A; margin-bottom: 2px; }
-.card-tag { font-size: 11px; font-weight: 500; padding: 3px 10px; border-radius: 6px; background: rgba(0,0,0,0.03); color: #475569; display: inline-block; margin: 2px 2px; }
-.card-desc { font-size: 13px; line-height: 1.7; color: #475569; margin-bottom: 14px; }
-.card-footer { display: flex; align-items: center; gap: 12px; padding-top: 14px; border-top: 1px solid rgba(0,0,0,0.04); }
-.card-link { margin-left: auto; font-size: 12px; font-weight: 600; color: #64748B; text-decoration: none; padding: 6px 16px; border-radius: 8px; border: 1px solid rgba(0,0,0,0.06); transition: all 0.2s; }
-.card-link:hover { color: #1D4ED8; border-color: rgba(29,78,216,0.12); background: rgba(29,78,216,0.04); }
-.grid-auto { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 18px; }
+.card-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 12px; }
+.card-emoji { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; background: rgba(0,0,0,0.03); flex-shrink: 0; }
+.card-rank { font-size: 10px; font-weight: 700; padding: 3px 10px; border-radius: 6px; }
+.cr-1 { background: rgba(8,204,200,0.06); color: var(--primary); }
+.cr-2 { background: rgba(1,147,248,0.06); color: var(--secondary); }
+.cr-3 { background: rgba(16,185,129,0.06); color: var(--accent); }
+.cr- { background: rgba(0,0,0,0.03); color: var(--text-tertiary); }
+.card-name { font-size: 16px; font-weight: 700; color: var(--text); }
+.card-tag { font-size: 10px; font-weight: 500; padding: 2px 8px; border-radius: 6px; background: rgba(0,0,0,0.03); color: var(--text-secondary); }
+.card-desc { font-size: 12px; line-height: 1.7; color: var(--text-secondary); margin-bottom: 12px; }
+.card-footer { display: flex; align-items: center; gap: 12px; padding-top: 12px; border-top: 1px solid var(--border); }
+.card-link { margin-left: auto; font-size: 11px; font-weight: 600; color: var(--text-tertiary); text-decoration: none; padding: 5px 14px; border-radius: 8px; border: 1px solid var(--border); transition: all 0.2s; }
+.card-link:hover { color: var(--primary); border-color: rgba(8,204,200,0.12); background: rgba(8,204,200,0.04); }
+.grid-auto { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
 
-.rec-section { margin: 48px 0; }
+.rec-section { margin: 40px 0; }
 .rec-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px; }
-.rec-item { display: flex; align-items: center; gap: 10px; padding: 12px 16px; border-radius: 10px; background: #fff; border: 1px solid rgba(0,0,0,0.04); transition: all 0.2s; text-decoration: none; }
-.rec-item:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.04); border-color: rgba(29,78,216,0.08); }
+.rec-item { display: flex; align-items: center; gap: 10px; padding: 12px 16px; border-radius: 10px; background: var(--surface); border: 1px solid var(--border); transition: all 0.2s; text-decoration: none; }
+.rec-item:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.04); border-color: rgba(8,204,200,0.08); }
 .rec-emoji { font-size: 18px; flex-shrink: 0; }
-.rec-text { font-size: 11px; color: #64748B; }
-.rec-text strong { color: #0F172A; font-weight: 600; }
+.rec-text { font-size: 11px; color: var(--text-secondary); }
+.rec-text strong { color: var(--text); font-weight: 600; }
 
-footer { padding: 40px 0; border-top: 1px solid rgba(0,0,0,0.04); text-align: center; }
-footer p { font-size: 13px; color: #64748B; }
+.price-free { background: rgba(16,185,129,0.08); color: var(--accent); }
+.price-paid { background: rgba(245,158,11,0.08); color: #D97706; }
+.price-trial { background: rgba(1,147,248,0.08); color: var(--secondary); }
+.skill-pill { font-size: 10px; padding: 2px 7px; border-radius: 4px; background: rgba(0,0,0,0.02); color: var(--text-secondary); border: 1px solid rgba(0,0,0,0.04); display: inline-block; margin: 1px; }
 
 /* TOOLTIP */
 .tp {
   position: fixed; z-index: 999999; pointer-events: none;
-  background: #fff; border-radius: 10px; padding: 8px 14px; max-width: 300px;
-  font-size: 13px; line-height: 1.6; color: #0F172A;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.1); border: 1px solid rgba(0,0,0,0.06);
-  border-left: 3px solid #1D4ED8;
+  background: var(--surface); border-radius: 10px; padding: 8px 14px; max-width: 300px;
+  font-size: 13px; line-height: 1.6; color: var(--text);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1); border: 1px solid var(--border);
+  border-left: 3px solid var(--primary);
   opacity: 0; transition: opacity 0.2s; font-family: 'Inter', sans-serif;
 }
 .tp.show { opacity: 1; }
 
-.price-free { background: rgba(16,185,129,0.08); color: #059669; }
-.price-paid { background: rgba(245,158,11,0.08); color: #D97706; }
-.price-trial { background: rgba(59,130,246,0.08); color: #2563EB; }
-.skill-pill { font-size: 10px; padding: 2px 7px; border-radius: 4px; background: rgba(0,0,0,0.02); color: #64748B; border: 1px solid rgba(0,0,0,0.04); display: inline-block; margin: 1px; }
-
 @media (max-width: 1024px) {
-  .dash-grid { grid-template-columns: 1fr; }
-  .studio-layout { grid-template-columns: 1fr; }
-  .progress-overview { grid-template-columns: 1fr; }
+  .sidebar { width: 64px; }
+  .sidebar .si-label, .sidebar .si-status, .sidebar .si-group, .sidebar-progress { display: none; }
+  .sidebar .si-item { justify-content: center; padding: 12px; }
+  .sidebar .si-icon { font-size: 20px; }
+  .main { margin-left: 64px; }
+  .section { padding: 24px 20px; }
+  .studio-layout, .progress-overview, .dash-grid { grid-template-columns: 1fr; }
   .ms-grid { grid-template-columns: repeat(2, 1fr); }
   .grid-cols-6 { grid-template-columns: repeat(3, 1fr); }
 }
 @media (max-width: 768px) {
-  .container { padding: 0 20px; }
-  .section { padding: 40px 0; }
-  .section-title { font-size: 24px; }
-  .section-desc { font-size: 14px; }
-  .focus-card { padding: 24px; flex-direction: column; text-align: center; }
+  .sidebar { display: none; }
+  .main { margin-left: 0; }
+  .section { padding: 20px 16px; }
+  .section-title { font-size: 22px; }
+  .ms-grid, .grid-cols-6 { grid-template-columns: 1fr; }
+  .focus-card { flex-direction: column; text-align: center; padding: 24px; }
   .focus-progress { justify-content: center; }
-  .ms-grid { grid-template-columns: 1fr; }
-  .grid-cols-6 { grid-template-columns: repeat(2, 1fr); }
-  .milestone-path { padding: 14px; }
+  .nav-search { display: none; }
   .plan-grid { grid-template-columns: 1fr; }
-  .grid-auto { grid-template-columns: 1fr; }
 }
 </style>
 </head>
 <body>
 
-<nav>
-  <div class="container">
-    <a href="#" class="nav-logo">
-      <svg viewBox="0 0 24 24" fill="none" stroke="#1D4ED8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
-      Shadow
-    </a>
-    <div class="nav-links">
-      <a class="nav-link active" href="#dashboard">Dashboard</a>
-      <a class="nav-link" href="#studio">Studio</a>
-      <a class="nav-link" href="#progress">Progress</a>
-      <a class="nav-link" href="#resources">Resources</a>
-    </div>
+<!-- TOP NAV -->
+<nav class="top-nav">
+  <a href="#" class="nav-logo">
+    <svg viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+    Shadow
+  </a>
+  <div class="nav-search">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    <input type="text" placeholder="Search resources, pieces..." data-zh="搜索资源、文章...">
+  </div>
+  <div class="nav-actions">
+    <button class="nav-icon-btn" data-zh="通知">🔔<span class="nav-dot"></span></button>
+    <div class="nav-avatar" data-zh="用户资料">EQ</div>
   </div>
 </nav>
 
-<div class="container">
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="si-group" data-zh="学习之旅">Learning Journey</div>
+  <a class="si-item active" href="#" data-section="dashboard" data-zh="仪表盘">
+    <span class="si-icon">◉</span><span class="si-label">Dashboard</span><span class="si-status si-done">✓</span>
+  </a>
+  <a class="si-item" href="#" data-section="input" data-zh="每日输入">
+    <span class="si-icon">📥</span><span class="si-label">Daily Input</span><span class="si-status" style="color:var(--primary);font-size:8px;">●</span>
+  </a>
+  <a class="si-item" href="#" data-section="studio" data-zh="影子跟读室">
+    <span class="si-icon">🎧</span><span class="si-label">Shadowing Studio</span>
+  </a>
+  <a class="si-item locked" href="#" data-section="output" data-zh="输出挑战">
+    <span class="si-icon">🔒</span><span class="si-label">Output Challenge</span><span class="si-status si-locked">🔒</span>
+  </a>
+  <a class="si-item locked" href="#" data-section="progress" data-zh="进度追踪">
+    <span class="si-icon">🔒</span><span class="si-label">Progress Tracker</span><span class="si-status si-locked">🔒</span>
+  </a>
 
-  <div class="section" id="dashboard">
-    <div class="section-header" style="margin-bottom:20px;">
-      <div class="section-label">Dashboard</div>
-    </div>
+  <div class="sidebar-progress">
+    <div class="sp-label" data-zh="整体进度">Overall Progress</div>
+    <div class="sp-bar"><div class="sp-fill" style="width:30%"></div></div>
+    <div class="sp-text" data-zh="3/10 篇完成">3 of 10 pieces</div>
+  </div>
+</aside>
 
-    <div class="dash-top">
-      <div class="focus-card" id="focusCard">
-        <div class="focus-left">
-          <div class="focus-label" data-zh="当前焦点">Current Focus</div>
-          <div class="focus-title" data-zh="第3篇 — 脆弱的力量">Piece 3 — The Power of Vulnerability</div>
-          <div class="focus-sub" data-zh="第2步/共4步 · 影子跟读练习">Step 2 of 4 · Shadowing Practice</div>
-          <div class="focus-progress">
-            <div class="focus-track"><div class="focus-fill" id="focusFill" style="width:72%"></div></div>
-            <span class="focus-pct" id="focusPct">72%</span>
-            <span style="font-size:11px;opacity:0.7;" data-zh="还剩约15分钟">~15 min left</span>
-          </div>
-        </div>
-        <div class="focus-right">
-          <button class="btn btn-lg" id="continueBtn" data-zh="继续学习">Continue Learning →</button>
-        </div>
+<!-- MAIN -->
+<main class="main">
+
+<!-- DASHBOARD -->
+<div class="section active" id="sec-dashboard">
+  <div class="section-hd">
+    <div class="section-label" data-zh="仪表盘">Dashboard</div>
+    <div class="section-title" data-zh="欢迎回来">Welcome back</div>
+  </div>
+  <div class="focus-card" id="focusCard">
+    <div class="focus-left">
+      <div class="focus-label" data-zh="当前焦点">Current Focus</div>
+      <div class="focus-title" data-zh="第3篇 — 脆弱的力量">Piece 3 — The Power of Vulnerability</div>
+      <div class="focus-sub" data-zh="第2步/共4步 · 影子跟读练习">Step 2 of 4 · Shadowing Practice</div>
+      <div class="focus-progress">
+        <div class="focus-track"><div class="focus-fill" id="focusFill" style="width:72%"></div></div>
+        <span class="focus-pct" id="focusPct">72%</span>
+        <span style="font-size:12px;opacity:0.7;" data-zh="还剩约15分钟">~15 min left</span>
       </div>
     </div>
-
-    <div class="dash-grid">
-      <div class="dash-card">
-        <div class="dash-card-hd"><span class="dash-card-title" data-zh="今日任务">Today's Mission</span><span style="font-size:11px;color:#64748B;" data-zh="3个任务">3 tasks</span></div>
-        <div class="dash-card-body">
-          <div class="mission-item done" data-mission="0"><div class="mission-cb"></div><span class="mission-label" data-zh="听写 — 第3篇（准确率92%）">Dictation — Piece 3 (92% accuracy)</span><span class="mission-time">✓</span></div>
-          <div class="mission-item current" data-mission="1"><div class="mission-cb"></div><span class="mission-label" data-zh="跟读 — 录音并对比">Shadowing — Record & Compare</span><span class="mission-time">→ Current</span></div>
-          <div class="mission-item" data-mission="2"><div class="mission-cb"></div><span class="mission-label" data-zh="生词 — 复习48张Anki卡片">New Words — Review 48 Anki cards</span><span class="mission-time">12 min</span></div>
-        </div>
-      </div>
-      <div class="dash-card">
-        <div class="dash-card-hd"><span class="dash-card-title" data-zh="每周进度">Weekly Progress</span><span style="font-size:11px;color:#64748B;" data-zh="第6/7天">Day 6 of 7</span></div>
-        <div class="dash-card-body">
-          <div class="stats-row">
-            <div class="stat-item"><div class="stat-item-label" data-zh="本周">This week</div><div class="stat-item-value">4h 12m</div><div class="stat-item-sub" data-zh="比上周多32分钟">↑ 32m vs last</div></div>
-            <div class="stat-item"><div class="stat-item-label" data-zh="准确率">Accuracy</div><div class="stat-item-value">87%</div><div class="stat-item-sub" data-zh="上升5%">↑ 5%</div></div>
-            <div class="stat-item"><div class="stat-item-label" data-zh="连续天数">Streak</div><div class="stat-item-value">12</div><div class="stat-item-sub" data-zh="天">days</div></div>
-          </div>
-          <div class="streak-bar">
-            <div class="streak-day active">M</div><div class="streak-day active">T</div><div class="streak-day active">W</div><div class="streak-day active">T</div><div class="streak-day miss">F</div><div class="streak-day active">S</div><div class="streak-day today">S</div>
-          </div>
-        </div>
-      </div>
+    <div class="focus-right">
+      <button class="btn btn-lg" id="continueBtn" data-zh="继续学习">Continue →</button>
     </div>
-
+  </div>
+  <div class="dash-grid">
     <div class="dash-card">
-      <div class="dash-card-hd"><span class="dash-card-title" data-zh="最近活动">Recent Activity</span></div>
+      <div class="dash-card-hd"><span class="dash-card-title" data-zh="今日任务">Today's Mission</span><span style="font-size:11px;color:var(--text-tertiary);" data-zh="3个任务">3 tasks</span></div>
       <div class="dash-card-body">
-        <div class="activity-item"><span class="activity-dot ad-blue"></span><span class="activity-text"><strong>Piece 3</strong> — Dictation complete (92%)</span><span class="activity-time">2h ago</span></div>
-        <div class="activity-item"><span class="activity-dot ad-purple"></span><span class="activity-text"><strong>Piece 2</strong> — Shadow session (45 min)</span><span class="activity-time">Yesterday</span></div>
-        <div class="activity-item"><span class="activity-dot ad-green"></span><span class="activity-text"><strong>Piece 1</strong> — Speed match ✅</span><span class="activity-time">3 days ago</span></div>
-        <div class="activity-item"><span class="activity-dot ad-amber"></span><span class="activity-text"><strong>Vocab</strong> — 48 new words from Piece 3</span><span class="activity-time">2h ago</span></div>
+        <div class="mission-item done"><div class="mission-cb"></div><span class="mission-label" data-zh="听写 — 第3篇（准确率92%）">Dictation — Piece 3 (92%)</span><span class="mission-time">✓</span></div>
+        <div class="mission-item current"><div class="mission-cb"></div><span class="mission-label" data-zh="跟读 — 录音并对比">Shadowing — Record & Compare</span><span class="mission-time">→</span></div>
+        <div class="mission-item"><div class="mission-cb"></div><span class="mission-label" data-zh="生词 — 复习48张Anki卡片">New Words — Review 48 cards</span><span class="mission-time">12 min</span></div>
       </div>
     </div>
-  </div>
-
-  <div class="section" id="studio">
-    <div class="section-header">
-      <div class="section-label">Studio</div>
-      <div class="section-title">Shadowing Studio</div>
-      <div class="section-desc">Listen · Dictate · Record · Compare — all in one place</div>
-    </div>
-    <div class="studio-layout">
-      <div class="studio-player">
-        <div class="player-info"><div class="player-title">Piece 3 — The Power of Vulnerability</div><div class="player-meta"><span>TED · 19:24</span><span>Brené Brown</span><span>B2</span></div></div>
-        <div class="player-waveform" id="waveform"></div>
-        <div class="player-controls">
-          <button class="ctrl-btn-sm">⏪</button><button class="ctrl-btn">▶</button><button class="ctrl-btn-sm">⏩</button>
-          <div class="ctrl-progress"><div class="ctrl-time"><span>2:34</span><span>-16:50</span></div><input class="ctrl-track" type="range" min="0" max="100" value="15"></div>
+    <div class="dash-card">
+      <div class="dash-card-hd"><span class="dash-card-title" data-zh="每周进度">Weekly Progress</span><span style="font-size:11px;color:var(--text-tertiary);">Day 6/7</span></div>
+      <div class="dash-card-body">
+        <div class="stats-row">
+          <div class="stat-item"><div class="stat-item-label" data-zh="本周">This week</div><div class="stat-item-value">4h 12m</div><div class="stat-item-sub">↑ 32m</div></div>
+          <div class="stat-item"><div class="stat-item-label" data-zh="准确率">Accuracy</div><div class="stat-item-value">87%</div><div class="stat-item-sub">↑ 5%</div></div>
+          <div class="stat-item"><div class="stat-item-label" data-zh="连续天数">Streak</div><div class="stat-item-value">12</div><div class="stat-item-sub" data-zh="天">days</div></div>
         </div>
-        <div class="player-modes"><button class="mode-chip active">Listen</button><button class="mode-chip">Dictation</button><button class="mode-chip">Shadow</button><button class="mode-chip">Speed Match</button></div>
-      </div>
-      <div class="studio-tabs">
-        <div class="st-tab-bar">
-          <button class="st-tab active" data-stpanel="transcript">Transcript</button>
-          <button class="st-tab" data-stpanel="recording">Recording</button>
-          <button class="st-tab" data-stpanel="feedback">AI Feedback</button>
-        </div>
-        <div class="st-panel active" id="st-transcript">
-          <div class="transcript-line active"><div class="tl-en">So I started a website called The Vulnerability Project.</div><div class="tl-cn">于是我创建了一个名为"脆弱性项目"的网站。</div></div>
-          <div class="transcript-line"><div class="tl-en">And I put on it — I put interview guides, I put talking points.</div><div class="tl-cn">我在上面放了访谈指南、谈话要点。</div></div>
-          <div class="transcript-line"><div class="tl-en">I put all the stuff that I've learned from Brené and from all these other researchers.</div><div class="tl-cn">我放了我从 Brené 和其他研究者那里学到的一切。</div></div>
-          <div class="transcript-line"><div class="tl-en">And about a year and a half ago, I had an idea.</div><div class="tl-cn">大约一年半前，我有了一个想法。</div></div>
-        </div>
-        <div class="st-panel" id="st-recording">
-          <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;">
-            <span class="rec-indicator" id="recIndicator"><span class="rec-dot"></span> Recording</span>
-            <button class="tact tact-record" id="recBtn">● Record</button>
-            <button class="tact">View Recording</button>
-          </div>
-          <div style="padding:20px;border-radius:10px;background:rgba(0,0,0,0.02);border:1px solid rgba(0,0,0,0.03);text-align:center;">
-            <div style="font-size:32px;margin-bottom:8px;">🎙️</div>
-            <div style="font-size:13px;font-weight:600;color:#0F172A;margin-bottom:4px;">No recordings yet</div>
-            <div style="font-size:11px;color:#94A3B8;">Click Record to start capturing your shadowing practice</div>
-          </div>
-        </div>
-        <div class="st-panel" id="st-feedback">
-          <div class="feedback-card fb-ok"><div class="fb-head"><span class="fb-icon">✅</span><span class="fb-type">Pronunciation — Good</span></div><div class="fb-detail">Your "vulnerability" is clear. The /v/ sound is well articulated. Keep the same tongue position for "project".</div></div>
-          <div class="feedback-card fb-improve"><div class="fb-head"><span class="fb-icon">💡</span><span class="fb-type">Intonation — Needs work</span></div><div class="fb-detail">The sentence "And I put on it" should rise at the end. Try to match the speaker's upward pitch on "it".</div></div>
-          <div class="feedback-card fb-ok"><div class="fb-head"><span class="fb-icon">✅</span><span class="fb-type">Rhythm — Good</span></div><div class="fb-detail">Good pacing. You're not rushing. The pause after "interview guides" matches the original.</div></div>
-          <div class="feedback-card fb-error"><div class="fb-head"><span class="fb-icon">🔊</span><span class="fb-type">Linking — Watch out</span></div><div class="fb-detail">"put on it" should link together (pu-ton-it). You're pronouncing each word separately.</div></div>
+        <div class="streak-bar">
+          <div class="streak-day active">M</div><div class="streak-day active">T</div><div class="streak-day active">W</div><div class="streak-day active">T</div><div class="streak-day miss">F</div><div class="streak-day active">S</div><div class="streak-day today">S</div>
         </div>
       </div>
     </div>
   </div>
-
-  <div class="section" id="progress">
-    <div class="section-header">
-      <div class="section-label" data-zh="进度与规划">Progress & Planning</div>
-      <div class="section-title" data-zh="你的学习路径">Your learning path</div>
+  <div class="dash-card">
+    <div class="dash-card-hd"><span class="dash-card-title" data-zh="最近活动">Recent Activity</span></div>
+    <div class="dash-card-body">
+      <div class="activity-item"><span class="activity-dot ad-primary"></span><span class="activity-text"><strong>Piece 3</strong> — Dictation complete (92%)</span><span class="activity-time">2h ago</span></div>
+      <div class="activity-item"><span class="activity-dot ad-secondary"></span><span class="activity-text"><strong>Piece 2</strong> — Shadow session (45 min)</span><span class="activity-time">Yesterday</span></div>
+      <div class="activity-item"><span class="activity-dot ad-accent"></span><span class="activity-text"><strong>Piece 1</strong> — Speed match ✅</span><span class="activity-time">3 days ago</span></div>
+      <div class="activity-item"><span class="activity-dot ad-purple"></span><span class="activity-text"><strong>Vocab</strong> — 48 new words added</span><span class="activity-time">2h ago</span></div>
     </div>
+  </div>
+</div>
 
-    <div class="milestone-path">
-      <div class="mp-item mp-done"><div class="mp-circle">A2</div><div class="mp-label">基础</div></div>
-      <div class="mp-connector filled"></div>
-      <div class="mp-item mp-done"><div class="mp-circle">B1</div><div class="mp-label">中级</div></div>
-      <div class="mp-connector half"></div>
-      <div class="mp-item mp-current"><div class="mp-circle">B2</div><div class="mp-label">中高级</div></div>
-      <div class="mp-connector"></div>
-      <div class="mp-item mp-locked"><div class="mp-circle">C1</div><div class="mp-label">高级</div></div>
-      <div class="mp-connector"></div>
-      <div class="mp-item mp-locked"><div class="mp-circle">C2</div><div class="mp-label">精通</div></div>
-    </div>
+<!-- DAILY INPUT -->
+<div class="section" id="sec-input">
+  <div class="section-hd">
+    <div class="section-label" data-zh="每日输入">Daily Input</div>
+    <div class="section-title" data-zh="今日推荐材料">Today's Recommended Materials</div>
+    <div class="section-desc" data-zh="每天15-30分钟输入，建立语感">15-30 min daily input to build language instinct</div>
+  </div>
+  <div class="input-grid">
+    <div class="input-card"><div class="input-emoji">🎤</div><div class="input-name" data-zh="脆弱的力量">The Power of Vulnerability</div><div class="input-meta">TED · 19:24 · B2</div><div class="input-desc" data-zh="Brene Brown 关于脆弱与勇气的经典演讲。适合影子跟读。">Brene Brown's classic talk on vulnerability & courage. Perfect for shadowing.</div><span class="input-tag" data-zh="当前篇目">Current Piece</span></div>
+    <div class="input-card"><div class="input-emoji">📻</div><div class="input-name" data-zh="6分钟英语">6 Minute English</div><div class="input-meta">BBC · 6:00 · B1</div><div class="input-desc" data-zh="简短有趣的双人对话，附带词汇解释。适合通勤听。">Short fun dialogues with vocab explanations. Great for commute.</div><span class="input-tag" data-zh="推荐">Recommended</span></div>
+    <div class="input-card"><div class="input-emoji">📰</div><div class="input-name" data-zh="慢速英语新闻">VOA Learning English</div><div class="input-meta">VOA · 5:00 · A2-B1</div><div class="input-desc" data-zh="慢速美式英语新闻，附带完整文稿。适合听写练习。">Slow American news with full transcripts. Ideal for dictation.</div><span class="input-tag" data-zh="听写练习">Dictation</span></div>
+    <div class="input-card"><div class="input-emoji">🎙️</div><div class="input-name" data-zh="TED每日推荐">TED Talks Daily</div><div class="input-meta">TED · 15:00 · B2-C1</div><div class="input-desc" data-zh">每天一篇 TED 演讲，拓展知识面同时提升听力。">Daily TED talk to expand knowledge while improving listening.</div><span class="input-tag" data-zh="进阶">Advanced</span></div>
+  </div>
+</div>
 
-    <div class="progress-overview">
-      <div class="chart-card">
-        <div class="chart-title">Dictation Accuracy</div>
-        <div class="chart-sub">Last 7 sessions · target: 90%</div>
-        <div class="chart-bars" id="progressChart"></div>
+<!-- SHADOWING STUDIO -->
+<div class="section" id="sec-studio">
+  <div class="section-hd">
+    <div class="section-label" data-zh="影子跟读室">Shadowing Studio</div>
+    <div class="section-title" data-zh="跟读练习">Shadowing Practice</div>
+    <div class="section-desc" data-zh="听写 · 跟读 · 录音 · 对比">Listen · Dictate · Record · Compare</div>
+  </div>
+  <div class="studio-layout">
+    <div class="studio-player">
+      <div class="player-info"><div class="player-title" data-zh="第3篇 — 脆弱的力量">Piece 3 — The Power of Vulnerability</div><div class="player-meta"><span>TED · 19:24</span><span>Brene Brown</span><span>B2</span></div></div>
+      <div class="player-waveform" id="waveform"></div>
+      <div class="player-controls">
+        <button class="ctrl-btn-sm">⏪</button><button class="ctrl-btn">▶</button><button class="ctrl-btn-sm">⏩</button>
+        <div class="ctrl-progress"><div class="ctrl-time"><span>2:34</span><span>-16:50</span></div><input class="ctrl-track" type="range" min="0" max="100" value="15"></div>
       </div>
-      <div class="level-card">
-        <div class="level-badge">Current Level</div>
-        <div class="level-current">B1 <span>→</span> B2</div>
-        <div class="level-next">~1,200 more words to B2</div>
-        <div style="display:flex;justify-content:space-between;font-size:10px;color:#94A3B8;margin-bottom:6px;"><span>3,800 / 5,000 words</span><span>76%</span></div>
-        <div class="level-track"><div class="level-fill" style="width:76%"></div></div>
+      <div class="player-modes"><button class="mode-chip active" data-zh="听">Listen</button><button class="mode-chip" data-zh="听写">Dictation</button><button class="mode-chip" data-zh="跟读">Shadow</button><button class="mode-chip" data-zh="语速匹配">Speed Match</button></div>
+    </div>
+    <div class="studio-tabs">
+      <div class="st-tab-bar">
+        <button class="st-tab active" data-stpanel="transcript" data-zh="文稿">Transcript</button>
+        <button class="st-tab" data-stpanel="recording" data-zh="录音">Recording</button>
+        <button class="st-tab" data-stpanel="feedback" data-zh="AI反馈">AI Feedback</button>
+      </div>
+      <div class="st-panel active" id="st-transcript">
+        <div class="transcript-line active"><div class="tl-en">So I started a website called The Vulnerability Project.</div><div class="tl-cn">于是我创建了一个名为"脆弱性项目"的网站。</div></div>
+        <div class="transcript-line"><div class="tl-en">And I put on it interview guides and talking points.</div><div class="tl-cn">我在上面放了访谈指南和谈话要点。</div></div>
+        <div class="transcript-line"><div class="tl-en">I put all the stuff that I've learned from Brene and other researchers.</div><div class="tl-cn">我放了我从 Brene 和其他研究者那里学到的一切。</div></div>
+        <div class="transcript-line"><div class="tl-en">And about a year and a half ago, I had an idea.</div><div class="tl-cn">大约一年半前，我有了一个想法。</div></div>
+      </div>
+      <div class="st-panel" id="st-recording">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;">
+          <span class="rec-indicator" id="recIndicator"><span class="rec-dot"></span> Recording</span>
+          <button class="tact tact-record" id="recBtn">● Record</button>
+          <button class="tact" data-zh="查看录音">View Recording</button>
+        </div>
+        <div style="padding:20px;border-radius:10px;background:rgba(0,0,0,0.02);border:1px solid var(--border);text-align:center;">
+          <div style="font-size:32px;margin-bottom:8px;">🎙️</div>
+          <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:4px;" data-zh="暂无录音">No recordings yet</div>
+          <div style="font-size:11px;color:var(--text-tertiary);" data-zh="点击录音开始捕捉你的跟读">Click Record to capture your shadowing practice</div>
+        </div>
+      </div>
+      <div class="st-panel" id="st-feedback">
+        <div class="feedback-card fb-ok"><div class="fb-head"><span class="fb-icon">✅</span><span class="fb-type" data-zh="发音 — 良好">Pronunciation — Good</span></div><div class="fb-detail" data-zh="你的 vulnerability 读得很清晰。/v/ 音很到位。project 保持同样的舌位。">Your "vulnerability" is clear. The /v/ sound is well articulated.</div></div>
+        <div class="feedback-card fb-improve"><div class="fb-head"><span class="fb-icon">💡</span><span class="fb-type" data-zh="语调 — 需改进">Intonation — Needs work</span></div><div class="fb-detail" data-zh="句子"And I put on it"结尾应该上扬。试着模仿说话者向上的音调。">The sentence "And I put on it" should rise at the end.</div></div>
+        <div class="feedback-card fb-ok"><div class="fb-head"><span class="fb-icon">✅</span><span class="fb-type" data-zh="节奏 — 良好">Rhythm — Good</span></div><div class="fb-detail" data-zh="语速好。你没有赶。interview guides 后的停顿与原文一致。">Good pacing. You're not rushing. The pause matches the original.</div></div>
+        <div class="feedback-card fb-error"><div class="fb-head"><span class="fb-icon">🔊</span><span class="fb-type" data-zh="连读 — 注意">Linking — Watch out</span></div><div class="fb-detail" data-zh="put on it 应该连读 (pu-ton-it)。你现在每个单词分开读了。">"put on it" should link together (pu-ton-it).</div></div>
       </div>
     </div>
+  </div>
+</div>
 
-    <div class="ms-grid">
-      <div class="ms-card"><div class="ms-icon msi-done">✅</div><div class="ms-card-title">Piece 1 — Foundation</div><div class="ms-card-desc">VOA: Space<br>78% → 91%</div></div>
-      <div class="ms-card"><div class="ms-icon msi-done">✅</div><div class="ms-card-title">Piece 2 — Building</div><div class="ms-card-desc">BBC: Climate<br>74% → 88%</div></div>
-      <div class="ms-card"><div class="ms-icon msi-current">🎯</div><div class="ms-card-title">Piece 3 — In Progress</div><div class="ms-card-desc">TED: Vulnerability<br>Dictation — 87%</div></div>
-      <div class="ms-card"><div class="ms-icon msi-locked">🔒</div><div class="ms-card-title">Piece 4</div><div class="ms-card-desc">Unlock after piece 3</div></div>
-      <div class="ms-card"><div class="ms-icon msi-locked">🔒</div><div class="ms-card-title">Piece 5</div><div class="ms-card-desc">Unlock after piece 4</div></div>
-      <div class="ms-card"><div class="ms-icon msi-locked">🔒</div><div class="ms-card-title">Pieces 6-10</div><div class="ms-card-desc">Continue the journey</div></div>
+<!-- OUTPUT CHALLENGE -->
+<div class="section" id="sec-output">
+  <div class="section-hd">
+    <div class="section-label" data-zh="输出挑战">Output Challenge</div>
+    <div class="section-title" data-zh="口语输出练习">Speaking Output Practice</div>
+    <div class="section-desc" data-zh="将输入转化为输出，真正掌握语言">Transform input into output — truly master the language</div>
+  </div>
+  <div style="padding:40px;text-align:center;background:var(--surface);border-radius:var(--radius-lg);border:1px solid var(--border);">
+    <div style="font-size:48px;margin-bottom:12px;">🔒</div>
+    <div style="font-size:18px;font-weight:700;color:var(--text);margin-bottom:6px;" data-zh="尚未解锁">Not yet unlocked</div>
+    <div style="font-size:13px;color:var(--text-secondary);max-width:400px;margin:0 auto;" data-zh="完成第3篇的所有步骤后，输出挑战将自动解锁。你将可以：\n- AI 口语对话练习\n- 主题演讲挑战\n- 写作输出任务">Complete Piece 3 to unlock. You'll get AI conversation practice, speech challenges, and writing tasks.</div>
+    <div style="margin-top:16px;display:inline-block;background:rgba(8,204,200,0.06);padding:8px 20px;border-radius:100px;font-size:12px;color:var(--primary);font-weight:600;" data-zh="完成第3篇 72%">Piece 3: 72% complete</div>
+  </div>
+</div>
+
+<!-- PROGRESS TRACKER -->
+<div class="section" id="sec-progress">
+  <div class="section-hd">
+    <div class="section-label" data-zh="进度追踪">Progress Tracker</div>
+    <div class="section-title" data-zh="你的学习路径">Your Learning Path</div>
+  </div>
+
+  <div class="milestone-path">
+    <div class="mp-item mp-done"><div class="mp-circle">A2</div><div class="mp-label" data-zh="基础">基础</div></div>
+    <div class="mp-connector filled"></div>
+    <div class="mp-item mp-done"><div class="mp-circle">B1</div><div class="mp-label" data-zh="中级">中级</div></div>
+    <div class="mp-connector half"></div>
+    <div class="mp-item mp-current"><div class="mp-circle">B2</div><div class="mp-label" data-zh="中高级">中高级</div></div>
+    <div class="mp-connector"></div>
+    <div class="mp-item mp-locked"><div class="mp-circle">C1</div><div class="mp-label" data-zh="高级">高级</div></div>
+    <div class="mp-connector"></div>
+    <div class="mp-item mp-locked"><div class="mp-circle">C2</div><div class="mp-label" data-zh="精通">精通</div></div>
+  </div>
+
+  <div class="progress-overview">
+    <div class="chart-card">
+      <div class="chart-title" data-zh="听写准确率">Dictation Accuracy</div>
+      <div class="chart-sub" data-zh="最近7次 · 目标: 90%">Last 7 sessions · target: 90%</div>
+      <div class="chart-bars" id="progressChart"></div>
     </div>
+    <div class="level-card">
+      <div class="level-badge" data-zh="当前等级">Current Level</div>
+      <div class="level-current">B1 <span>→</span> B2</div>
+      <div class="level-next" data-zh="还需约1,200词达到B2">~1,200 more words to B2</div>
+      <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text-tertiary);margin-bottom:6px;"><span>3,800 / 5,000 words</span><span>76%</span></div>
+      <div class="level-track"><div class="level-fill" style="width:76%"></div></div>
+    </div>
+  </div>
 
-    <div style="margin-top:36px;">
-      <div class="section-label">Learning Plan</div>
-      <div class="section-title" style="font-size:24px;">Set your goals</div>
-      <div style="margin-top:20px;">
+  <div class="ms-grid">
+    <div class="ms-card"><div class="ms-icon msi-done">✅</div><div class="ms-card-title" data-zh="第1篇 — 基础">Piece 1 — Foundation</div><div class="ms-card-desc">VOA: Space<br>78% → 91%</div></div>
+    <div class="ms-card"><div class="ms-icon msi-done">✅</div><div class="ms-card-title" data-zh="第2篇 — 进阶">Piece 2 — Building</div><div class="ms-card-desc">BBC: Climate<br>74% → 88%</div></div>
+    <div class="ms-card"><div class="ms-icon msi-current">🎯</div><div class="ms-card-title" data-zh="第3篇 — 进行中">Piece 3 — In Progress</div><div class="ms-card-desc">TED: Vulnerability<br>Dictation — 87%</div></div>
+    <div class="ms-card"><div class="ms-icon msi-locked">🔒</div><div class="ms-card-title" data-zh="第4篇">Piece 4</div><div class="ms-card-desc" data-zh="完成第3篇后解锁">Unlock after piece 3</div></div>
+    <div class="ms-card"><div class="ms-icon msi-locked">🔒</div><div class="ms-card-title" data-zh="第5篇">Piece 5</div><div class="ms-card-desc" data-zh="完成第4篇后解锁">Unlock after piece 4</div></div>
+    <div class="ms-card"><div class="ms-icon msi-locked">🔒</div><div class="ms-card-title" data-zh="第6-10篇">Pieces 6-10</div><div class="ms-card-desc" data-zh="继续你的旅程">Continue the journey</div></div>
+  </div>
 
-      <div style="font-size:11px;font-weight:600;color:#94A3B8;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:12px;">CEFR Ability Ladder</div>
+  <div class="dash-card" style="margin-top:24px;">
+    <div class="dash-card-hd"><span class="dash-card-title" data-zh="学习计划">Learning Plan</span></div>
+    <div class="dash-card-body">
+      <div style="font-size:11px;font-weight:600;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:12px;" data-zh="CEFR能力阶梯">CEFR Ability Ladder</div>
       <div class="grid-cols-6" id="cefrStair" style="margin-bottom:12px;">
         <div class="cefr-step cstep-a1 reached" data-level="A1"><div class="cefr-step-label">A1</div><div class="cefr-step-name">Beginner</div><div class="cefr-step-stat">入门</div><div class="vb">~500</div></div>
         <div class="cefr-step cstep-a2" data-level="A2"><div class="cefr-step-label">A2</div><div class="cefr-step-name">Elementary</div><div class="cefr-step-stat">基础</div><div class="vb">~1,500</div></div>
         <div class="cefr-step cstep-b1" data-level="B1"><div class="cefr-step-label">B1</div><div class="cefr-step-name">Intermediate</div><div class="cefr-step-stat">中级</div><div class="vb">~3,000</div></div>
-        <div class="cefr-step cstep-b2" data-level="B2"><div class="cefr-step-label">B2</div><div class="cefr-step-name">Upper Int.</div><div class="cefr-step-stat">中高级</div><div class="vb">~5,000</div></div>
+        <div class="cefr-step cstep-b2" data-level="B2"><div class="cefr-step-label">B2</div><div class="cefr-step-name" data-zh="中高级">Upper Int.</div><div class="cefr-step-stat">中高级</div><div class="vb">~5,000</div></div>
         <div class="cefr-step cstep-c1" data-level="C1"><div class="cefr-step-label">C1</div><div class="cefr-step-name">Advanced</div><div class="cefr-step-stat">高级</div><div class="vb">~8,000</div></div>
         <div class="cefr-step cstep-c2" data-level="C2"><div class="cefr-step-label">C2</div><div class="cefr-step-name">Proficient</div><div class="cefr-step-stat">精通</div><div class="vb">~15k+</div></div>
       </div>
-      <div class="cefr-target">Click a level above to see matching scores → <span id="cefrTargetDisplay">B2</span></div>
+      <div class="cefr-target" data-zh="点击级别查看对应分数">Click a level to see matching scores → <span id="cefrTargetDisplay">B2</span></div>
 
-      <div style="font-size:11px;font-weight:600;color:#94A3B8;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:12px;">Score Comparison</div>
       <div class="table-wrap">
         <table>
-          <thead><tr><th>CEFR</th><th>TOEFL</th><th>IELTS</th><th>Vocab</th><th>Description</th></tr></thead>
+          <thead><tr><th>CEFR</th><th>TOEFL</th><th>IELTS</th><th>Vocab</th><th data-zh="描述">Description</th></tr></thead>
           <tbody>
-            <tr class="hl" data-cefr="A1"><td>A1</td><td>—</td><td>—</td><td>~500</td><td>Basic words, slow speech</td></tr>
-            <tr data-cefr="A2"><td>A2</td><td>—</td><td>—</td><td>~1,500</td><td>Daily phrases, directions</td></tr>
-            <tr data-cefr="B1"><td>B1</td><td>42-71</td><td>4.0-5.0</td><td>~3,000</td><td>Travel, work basics</td></tr>
-            <tr class="hl" data-cefr="B2"><td>B2</td><td>72-94</td><td>5.5-6.5</td><td>~5,000</td><td>Daily fluency 🎯 Uni min.</td></tr>
-            <tr data-cefr="C1"><td>C1</td><td>95-114</td><td>7.0-8.0</td><td>~8,000</td><td>Academic fluency 🎯 Top uni</td></tr>
-            <tr data-cefr="C2"><td>C2</td><td>115-120</td><td>8.5-9.0</td><td>~15k+</td><td>Native-level mastery</td></tr>
+            <tr class="hl" data-cefr="A1"><td>A1</td><td>—</td><td>—</td><td>~500</td><td data-zh="基础词汇，慢速">Basic words, slow speech</td></tr>
+            <tr data-cefr="A2"><td>A2</td><td>—</td><td>—</td><td>~1,500</td><td data-zh="日常短语">Daily phrases, directions</td></tr>
+            <tr data-cefr="B1"><td>B1</td><td>42-71</td><td>4.0-5.0</td><td>~3,000</td><td data-zh="旅行、工作基础">Travel, work basics</td></tr>
+            <tr class="hl" data-cefr="B2"><td>B2</td><td>72-94</td><td>5.5-6.5</td><td>~5,000</td><td data-zh="日常流利 🎯 大学最低要求">Daily fluency 🎯 Uni min.</td></tr>
+            <tr data-cefr="C1"><td>C1</td><td>95-114</td><td>7.0-8.0</td><td>~8,000</td><td data-zh="学术流利 🎯 顶尖大学">Academic fluency 🎯 Top uni</td></tr>
+            <tr data-cefr="C2"><td>C2</td><td>115-120</td><td>8.5-9.0</td><td>~15k+</td><td data-zh="母语水平">Native-level mastery</td></tr>
           </tbody>
         </table>
       </div>
 
-      <div style="font-size:11px;font-weight:600;color:#94A3B8;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:12px;">Choose Your Goal</div>
+      <div style="font-size:11px;font-weight:600;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:12px;" data-zh="选择你的目标">Choose Your Goal</div>
       <div class="plan-tabs" id="planTabs">
         <button class="plan-tab active" data-tab="toefl">🎯 TOEFL 100+</button>
         <button class="plan-tab" data-tab="ielts">🎯 IELTS 7.0+</button>
         <button class="plan-tab" data-tab="fluency">💬 Fluency</button>
       </div>
-
       <div class="plan-panel active" id="panel-toefl">
         <div class="plan-viz">
-          <div class="plan-viz-item pv-blue"><div class="plan-viz-label">Target</div><div class="plan-viz-value">100</div><div class="plan-viz-sub">TOEFL iBT</div></div>
+          <div class="plan-viz-item pv-blue"><div class="plan-viz-label" data-zh="目标">Target</div><div class="plan-viz-value">100</div><div class="plan-viz-sub">TOEFL iBT</div></div>
           <div class="plan-viz-item pv-purple"><div class="plan-viz-label">IELTS Equiv</div><div class="plan-viz-value">7.0-7.5</div><div class="plan-viz-sub">CEFR C1</div></div>
-          <div class="plan-viz-item pv-green"><div class="plan-viz-label">Vocabulary</div><div class="plan-viz-value">8,000</div><div class="plan-viz-sub">target</div></div>
-          <div class="plan-viz-item pv-amber"><div class="plan-viz-label">Duration</div><div class="plan-viz-value">12-24</div><div class="plan-viz-sub">months</div></div>
+          <div class="plan-viz-item pv-green"><div class="plan-viz-label" data-zh="词汇量">Vocabulary</div><div class="plan-viz-value">8,000</div><div class="plan-viz-sub">target</div></div>
+          <div class="plan-viz-item pv-amber"><div class="plan-viz-label" data-zh="时长">Duration</div><div class="plan-viz-value">12-24</div><div class="plan-viz-sub">months</div></div>
         </div>
         <div class="plan-grid">
-          <div class="plan-card pc-s"><div class="plan-card-icon">🌱</div><div class="plan-card-title">Sprint 1 · Survival</div><div class="plan-card-sub">A1 → A2 · 0-3 mo</div><div class="pt"><div class="pf" style="width:100%"></div></div><div class="pills"><span class="pill goal">TOEFL —</span><span class="pill goal">Vocab 1,500</span></div><div class="plan-card-plan">Build basic language sense. 20-30 min daily. Focus on common words and basic sentences.</div></div>
-          <div class="plan-card pc-f"><div class="plan-card-icon">📚</div><div class="plan-card-title">Sprint 2 · Foundation</div><div class="plan-card-sub">A2 → B1 · 3-8 mo</div><div class="pt"><div class="pf" style="width:80%"></div></div><div class="pills"><span class="pill goal">TOEFL —</span><span class="pill goal">Vocab 3,000</span></div><div class="plan-card-plan">Systematic grammar. Begin listening input. 30-45 min daily.</div></div>
-          <div class="plan-card pc-i"><div class="plan-card-icon">🚀</div><div class="plan-card-title">Sprint 3 · Breakthrough</div><div class="plan-card-sub">B1 → B2 · 8-16 mo</div><div class="pt"><div class="pf" style="width:50%"></div></div><div class="pills"><span class="pill goal">TOEFL 72-94</span><span class="pill goal">IELTS 5.5-6.5</span><span class="pill goal">Vocab 5,000</span></div><div class="plan-card-plan">Critical climb. Begin exam prep, academic listening/reading. AI speaking tools. 45-60 min daily.</div></div>
-          <div class="plan-card pc-a"><div class="plan-card-icon">🎯</div><div class="plan-card-title">Sprint 4 · Sprint</div><div class="plan-card-sub">B2 → C1 · 16-24 mo</div><div class="pt"><div class="pf" style="width:25%"></div></div><div class="pills"><span class="pill goal">TOEFL 95-114</span><span class="pill goal">IELTS 7.0-8.0</span><span class="pill goal">Vocab 8,000</span></div><div class="plan-card-plan">High-intensity prep. Mock exams, error analysis, native tutors for mock interviews.</div></div>
+          <div class="plan-card pc-s"><div class="plan-card-icon">🌱</div><div class="plan-card-title" data-zh="冲刺1 · 生存">Sprint 1 · Survival</div><div class="plan-card-sub">A1 → A2 · 0-3 mo</div><div class="pt"><div class="pf" style="width:100%"></div></div><div class="pills"><span class="pill goal">TOEFL —</span><span class="pill goal">Vocab 1,500</span></div><div class="plan-card-plan" data-zh="建立基本语感。每天20-30分钟。聚焦常用词和基础句子。">Build basic language sense. 20-30 min daily. Focus on common words and basic sentences.</div></div>
+          <div class="plan-card pc-f"><div class="plan-card-icon">📚</div><div class="plan-card-title" data-zh="冲刺2 · 基础">Sprint 2 · Foundation</div><div class="plan-card-sub">A2 → B1 · 3-8 mo</div><div class="pt"><div class="pf" style="width:80%"></div></div><div class="pills"><span class="pill goal">TOEFL —</span><span class="pill goal">Vocab 3,000</span></div><div class="plan-card-plan" data-zh="系统学习语法。开始听力输入。每天30-45分钟。">Systematic grammar. Begin listening input. 30-45 min daily.</div></div>
+          <div class="plan-card pc-i"><div class="plan-card-icon">🚀</div><div class="plan-card-title" data-zh="冲刺3 · 突破">Sprint 3 · Breakthrough</div><div class="plan-card-sub">B1 → B2 · 8-16 mo</div><div class="pt"><div class="pf" style="width:50%"></div></div><div class="pills"><span class="pill goal">TOEFL 72-94</span><span class="pill goal">IELTS 5.5-6.5</span><span class="pill goal">Vocab 5,000</span></div><div class="plan-card-plan" data-zh="关键爬升期。开始备考，学术听力和阅读。AI口语工具。每天45-60分钟。">Critical climb. Begin exam prep, academic listening/reading. AI speaking tools. 45-60 min daily.</div></div>
+          <div class="plan-card pc-a"><div class="plan-card-icon">🎯</div><div class="plan-card-title" data-zh="冲刺4 · 冲刺">Sprint 4 · Sprint</div><div class="plan-card-sub">B2 → C1 · 16-24 mo</div><div class="pt"><div class="pf" style="width:25%"></div></div><div class="pills"><span class="pill goal">TOEFL 95-114</span><span class="pill goal">IELTS 7.0-8.0</span><span class="pill goal">Vocab 8,000</span></div><div class="plan-card-plan" data-zh="高强度备考。模拟考试、错题分析、母语导师模拟面试。">High-intensity prep. Mock exams, error analysis, native tutors.</div></div>
         </div>
       </div>
-
       <div class="plan-panel" id="panel-ielts">
         <div class="plan-viz">
-          <div class="plan-viz-item pv-purple"><div class="plan-viz-label">Target</div><div class="plan-viz-value">7.0</div><div class="plan-viz-sub">IELTS</div></div>
+          <div class="plan-viz-item pv-purple"><div class="plan-viz-label" data-zh="目标">Target</div><div class="plan-viz-value">7.0</div><div class="plan-viz-sub">IELTS</div></div>
           <div class="plan-viz-item pv-blue"><div class="plan-viz-label">TOEFL Equiv</div><div class="plan-viz-value">95-105</div><div class="plan-viz-sub">CEFR C1</div></div>
-          <div class="plan-viz-item pv-green"><div class="plan-viz-label">Vocabulary</div><div class="plan-viz-value">8,000</div><div class="plan-viz-sub">target</div></div>
-          <div class="plan-viz-item pv-amber"><div class="plan-viz-label">Duration</div><div class="plan-viz-value">10-20</div><div class="plan-viz-sub">months</div></div>
+          <div class="plan-viz-item pv-green"><div class="plan-viz-label" data-zh="词汇量">Vocabulary</div><div class="plan-viz-value">8,000</div><div class="plan-viz-sub">target</div></div>
+          <div class="plan-viz-item pv-amber"><div class="plan-viz-label" data-zh="时长">Duration</div><div class="plan-viz-value">10-20</div><div class="plan-viz-sub">months</div></div>
         </div>
         <div class="plan-grid">
-          <div class="plan-card pc-s"><div class="plan-card-icon">🌱</div><div class="plan-card-title">Sprint 1 · Survival</div><div class="plan-card-sub">A1 → A2 · 0-3 mo</div><div class="pt"><div class="pf" style="width:100%"></div></div><div class="pills"><span class="pill goal">IELTS —</span><span class="pill goal">Vocab 1,500</span></div><div class="plan-card-plan">Build rhythm, focus on phonics. Goal: dare to speak. No IELTS yet.</div></div>
-          <div class="plan-card pc-f"><div class="plan-card-icon">📚</div><div class="plan-card-title">Sprint 2 · Foundation</div><div class="plan-card-sub">A2 → B1 · 3-7 mo</div><div class="pt"><div class="pf" style="width:70%"></div></div><div class="pills"><span class="pill goal">IELTS 4.0-5.0</span><span class="pill goal">Vocab 3,000</span></div><div class="plan-card-plan">Grammar + double vocab. IELTS题型 overview, Section 1-2 listening.</div></div>
-          <div class="plan-card pc-i"><div class="plan-card-icon">🚀</div><div class="plan-card-title">Sprint 3 · Breakthrough</div><div class="plan-card-sub">B1 → B2 · 7-15 mo</div><div class="pt"><div class="pf" style="width:50%"></div></div><div class="pills"><span class="pill goal">IELTS 5.5-6.5</span><span class="pill goal">Vocab 5,000</span></div><div class="plan-card-plan">Systematic IELTS practice. Section 3-4, complex reading, Task 1&2 writing.</div></div>
-          <div class="plan-card pc-a"><div class="plan-card-icon">🎯</div><div class="plan-card-title">Sprint 4 · Sprint</div><div class="plan-card-sub">B2 → C1 · 15-24 mo</div><div class="pt"><div class="pf" style="width:25%"></div></div><div class="pills"><span class="pill goal">IELTS 7.0-8.0</span><span class="pill goal">Vocab 8,000</span></div><div class="plan-card-plan">Sprint to 7.0+. Writing correction, speaking mock exams, weekly tutor.</div></div>
+          <div class="plan-card pc-s"><div class="plan-card-icon">🌱</div><div class="plan-card-title" data-zh="冲刺1 · 生存">Sprint 1 · Survival</div><div class="plan-card-sub">A1 → A2 · 0-3 mo</div><div class="pt"><div class="pf" style="width:100%"></div></div><div class="pills"><span class="pill goal">IELTS —</span><span class="pill goal">Vocab 1,500</span></div><div class="plan-card-plan" data-zh="建立节奏，聚焦自然拼读。目标是敢开口。">Build rhythm, focus on phonics. Goal: dare to speak.</div></div>
+          <div class="plan-card pc-f"><div class="plan-card-icon">📚</div><div class="plan-card-title" data-zh="冲刺2 · 基础">Sprint 2 · Foundation</div><div class="plan-card-sub">A2 → B1 · 3-7 mo</div><div class="pt"><div class="pf" style="width:70%"></div></div><div class="pills"><span class="pill goal">IELTS 4.0-5.0</span><span class="pill goal">Vocab 3,000</span></div><div class="plan-card-plan" data-zh="语法+双倍词汇量。了解雅思题型。Section 1-2听力练习。">Grammar + double vocab. IELTS overview, Section 1-2 listening.</div></div>
+          <div class="plan-card pc-i"><div class="plan-card-icon">🚀</div><div class="plan-card-title" data-zh="冲击3 · 突破">Sprint 3 · Breakthrough</div><div class="plan-card-sub">B1 → B2 · 7-15 mo</div><div class="pt"><div class="pf" style="width:50%"></div></div><div class="pills"><span class="pill goal">IELTS 5.5-6.5</span><span class="pill goal">Vocab 5,000</span></div><div class="plan-card-plan" data-zh="系统雅思练习。Section 3-4，复杂阅读，Task 1&2写作。">Systematic IELTS practice. Section 3-4, complex reading, Task 1&2 writing.</div></div>
+          <div class="plan-card pc-a"><div class="plan-card-icon">🎯</div><div class="plan-card-title" data-zh="冲刺4 · 冲刺">Sprint 4 · Sprint</div><div class="plan-card-sub">B2 → C1 · 15-24 mo</div><div class="pt"><div class="pf" style="width:25%"></div></div><div class="pills"><span class="pill goal">IELTS 7.0-8.0</span><span class="pill goal">Vocab 8,000</span></div><div class="plan-card-plan" data-zh="冲刺7.0+。写作修改、口语模拟考试、每周导师课。">Sprint to 7.0+. Writing correction, speaking mock exams, weekly tutor.</div></div>
         </div>
       </div>
-
       <div class="plan-panel" id="panel-fluency">
         <div class="plan-viz">
-          <div class="plan-viz-item pv-green"><div class="plan-viz-label">Target</div><div class="plan-viz-value">B2</div><div class="plan-viz-sub">Daily & Work</div></div>
-          <div class="plan-viz-item pv-blue"><div class="plan-viz-label">CEFR</div><div class="plan-viz-value">B2</div><div class="plan-viz-sub">Confident convo</div></div>
-          <div class="plan-viz-item pv-green"><div class="plan-viz-label">Vocabulary</div><div class="plan-viz-value">5,000</div><div class="plan-viz-sub">active</div></div>
-          <div class="plan-viz-item pv-amber"><div class="plan-viz-label">Duration</div><div class="plan-viz-value">8-14</div><div class="plan-viz-sub">months</div></div>
+          <div class="plan-viz-item pv-green"><div class="plan-viz-label" data-zh="目标">Target</div><div class="plan-viz-value">B2</div><div class="plan-viz-sub" data-zh="日常与工作">Daily & Work</div></div>
+          <div class="plan-viz-item pv-blue"><div class="plan-viz-label">CEFR</div><div class="plan-viz-value">B2</div><div class="plan-viz-sub" data-zh="自信对话">Confident convo</div></div>
+          <div class="plan-viz-item pv-green"><div class="plan-viz-label" data-zh="词汇量">Vocabulary</div><div class="plan-viz-value">5,000</div><div class="plan-viz-sub">active</div></div>
+          <div class="plan-viz-item pv-amber"><div class="plan-viz-label" data-zh="时长">Duration</div><div class="plan-viz-value">8-14</div><div class="plan-viz-sub">months</div></div>
         </div>
         <div class="plan-grid">
-          <div class="plan-card pc-s"><div class="plan-card-icon">🌱</div><div class="plan-card-title">Phase 1 · Dare to Speak</div><div class="plan-card-sub">A1 → A2 · 0-3 mo</div><div class="pt"><div class="pf" style="width:100%"></div></div><div class="pills"><span class="pill goal">Break silence</span><span class="pill goal">Vocab 1,500</span></div><div class="plan-card-plan">Goal: dare to speak. Duolingo + AI conversation practice.</div></div>
-          <div class="plan-card pc-f"><div class="plan-card-icon">🗣️</div><div class="plan-card-title">Phase 2 · Start Chatting</div><div class="plan-card-sub">A2 → B1 · 3-8 mo</div><div class="pt"><div class="pf" style="width:60%"></div></div><div class="pills"><span class="pill goal">Daily topics</span><span class="pill goal">Vocab 3,000</span></div><div class="plan-card-plan">Weekend plans, travel stories, movie reviews. AI speaking for场景 practice.</div></div>
-          <div class="plan-card pc-i"><div class="plan-card-icon">🎤</div><div class="plan-card-title">Phase 3 · Express Freely</div><div class="plan-card-sub">B1 → B2 · 8-14 mo</div><div class="pt"><div class="pf" style="width:40%"></div></div><div class="pills"><span class="pill goal">Work ready</span><span class="pill goal">Vocab 5,000</span></div><div class="plan-card-plan">Join meetings, write emails. iTalki + ELSA for pronunciation.</div></div>
+          <div class="plan-card pc-s"><div class="plan-card-icon">🌱</div><div class="plan-card-title" data-zh="阶段1 · 敢开口">Phase 1 · Dare to Speak</div><div class="plan-card-sub">A1 → A2 · 0-3 mo</div><div class="pt"><div class="pf" style="width:100%"></div></div><div class="pills"><span class="pill goal" data-zh="打破沉默">Break silence</span><span class="pill goal">Vocab 1,500</span></div><div class="plan-card-plan" data-zh="目标：敢开口。多邻国+AI对话练习。">Goal: dare to speak. Duolingo + AI conversation practice.</div></div>
+          <div class="plan-card pc-f"><div class="plan-card-icon">🗣️</div><div class="plan-card-title" data-zh="阶段2 · 开始聊天">Phase 2 · Start Chatting</div><div class="plan-card-sub">A2 → B1 · 3-8 mo</div><div class="pt"><div class="pf" style="width:60%"></div></div><div class="pills"><span class="pill goal" data-zh="日常话题">Daily topics</span><span class="pill goal">Vocab 3,000</span></div><div class="plan-card-plan" data-zh="周末计划、旅行故事、影评。AI场景练习。">Weekend plans, travel stories, movie reviews. AI practice.</div></div>
+          <div class="plan-card pc-i"><div class="plan-card-icon">🎤</div><div class="plan-card-title" data-zh="阶段3 · 自由表达">Phase 3 · Express Freely</div><div class="plan-card-sub">B1 → B2 · 8-14 mo</div><div class="pt"><div class="pf" style="width:40%"></div></div><div class="pills"><span class="pill goal" data-zh="工作准备">Work ready</span><span class="pill goal">Vocab 5,000</span></div><div class="plan-card-plan" data-zh="参加会议、写邮件。iTalki + ELSA 练发音。">Join meetings, write emails. iTalki + ELSA for pronunciation.</div></div>
         </div>
-      </div>
-
-      <div class="rec-section">
-        <div style="font-size:13px;font-weight:700;color:#0F172A;margin-bottom:16px;">✦ Recommended Stacks</div>
-        <div class="rec-grid">
-          <div class="rec-item"><span class="rec-emoji">🌱</span><span class="rec-text">Beginner → <strong>Duolingo</strong> + <strong>Lexinglo</strong></span></div>
-          <div class="rec-item"><span class="rec-emoji">🗣️</span><span class="rec-text">Speaking → <strong>SpeakShark</strong> + <strong>ELSA</strong></span></div>
-          <div class="rec-item"><span class="rec-emoji">🚀</span><span class="rec-text">Advanced → <strong>LingQ</strong> + <strong>iTalki</strong></span></div>
-          <div class="rec-item"><span class="rec-emoji">🎓</span><span class="rec-text">Exam → <strong>British Council</strong> + <strong>Anki</strong></span></div>
-          <div class="rec-item"><span class="rec-emoji">🎧</span><span class="rec-text">Commute → <strong>Pimsleur</strong> + <strong>BBC</strong></span></div>
-        </div>
-      </div>
-
       </div>
     </div>
   </div>
 
-  <div class="section" id="resources">
-    <div class="section-header">
-      <div class="section-label">Resources</div>
-      <div class="section-title">Curated learning tools</div>
-      <div class="section-desc">30 hand-picked resources across 6 categories, ranked by real-world impact</div>
-    </div>
-
-    <div style="margin-bottom:36px;">
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;"><div style="width:36px;height:36px;border-radius:8px;background:rgba(29,78,216,0.06);display:flex;align-items:center;justify-content:center;font-size:16px;">📚</div><div><div style="font-size:16px;font-weight:700;color:#0F172A;">Comprehensive Platforms</div><div style="font-size:11px;color:#94A3B8;">All-in-one learning systems</div></div></div>
-      <div class="grid-auto">
-        <div class="card"><div class="card-top"><div class="card-emoji">🦉</div><span class="card-rank cr-1">#1</span></div><div class="card-name">Duolingo</div><div style="margin:6px 0;"><span class="card-tag">Gamified</span><span class="card-tag">A1-B2</span><span class="card-tag">Free</span></div><div class="card-desc">Global #1 free English app. Gamified daily habit, structured progression. New AI conversation feature.</div><div class="card-footer"><span style="font-size:11px;color:#94A3B8;">★ 9.5</span><a class="card-link" href="https://www.duolingo.com" target="_blank">Visit →</a></div></div>
-        <div class="card"><div class="card-top"><div class="card-emoji">🔤</div><span class="card-rank cr-2">#2</span></div><div class="card-name">Babbel</div><div style="margin:6px 0;"><span class="card-tag">Grammar</span><span class="card-tag">Structured</span></div><div class="card-desc">Best grammar explanations. 10-15 min lessons, A1-B2, native audio.</div><div class="card-footer"><span style="font-size:11px;color:#94A3B8;">★ 9.0</span><a class="card-link" href="https://www.babbel.com" target="_blank">Visit →</a></div></div>
-        <div class="card"><div class="card-top"><div class="card-emoji">🌍</div><span class="card-rank cr-3">#3</span></div><div class="card-name">Rosetta Stone</div><div style="margin:6px 0;"><span class="card-tag">Immersive</span><span class="card-tag">Speech AI</span></div><div class="card-desc">Pioneer of immersive learning. English-only with TruAccent speech recognition.</div><div class="card-footer"><span style="font-size:11px;color:#94A3B8;">★ 8.8</span><a class="card-link" href="https://www.rosettastone.com" target="_blank">Visit →</a></div></div>
-        <div class="card"><div class="card-top"><div class="card-emoji">👥</div><span class="card-rank cr-">#4</span></div><div class="card-name">Busuu</div><div style="margin:6px 0;"><span class="card-tag">Community</span><span class="card-tag">CEFR</span></div><div class="card-desc">655+ lessons A1-C1. Native speaker corrections + AI speaking.</div><div class="card-footer"><span style="font-size:11px;color:#94A3B8;">★ 8.5</span><a class="card-link" href="https://www.busuu.com" target="_blank">Visit →</a></div></div>
-        <div class="card"><div class="card-top"><div class="card-emoji">🏫</div><span class="card-rank cr-">#5</span></div><div class="card-name">Lingoda</div><div style="margin:6px 0;"><span class="card-tag">Live classes</span></div><div class="card-desc">Live online classes with professional teachers. Sprint cashback.</div><div class="card-footer"><span style="font-size:11px;color:#94A3B8;">★ 8.3</span><a class="card-link" href="https://www.lingoda.com" target="_blank">Visit →</a></div></div>
-        <div class="card"><div class="card-top"><div class="card-emoji">📖</div><span class="card-rank cr-">#6</span></div><div class="card-name">Fluenz</div><div style="margin:6px 0;"><span class="card-tag">Video</span></div><div class="card-desc">Instructor-led video lessons with clear logical progression.</div><div class="card-footer"><span style="font-size:11px;color:#94A3B8;">★ 8.0</span><a class="card-link" href="https://www.fluenz.com" target="_blank">Visit →</a></div></div>
-      </div>
-    </div>
-
-    <div style="margin-bottom:36px;">
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;"><div style="width:36px;height:36px;border-radius:8px;background:rgba(124,58,237,0.06);display:flex;align-items:center;justify-content:center;font-size:16px;">🗣️</div><div><div style="font-size:16px;font-weight:700;color:#0F172A;">Speaking & Pronunciation</div><div style="font-size:11px;color:#94A3B8;">Speech accuracy and fluency</div></div></div>
-      <div class="grid-auto">
-        <div class="card"><div class="card-top"><div class="card-emoji">🎯</div><span class="card-rank cr-1">#1</span></div><div class="card-name">ELSA Speak</div><div style="margin:6px 0;"><span class="card-tag">Phoneme AI</span><span class="card-tag">Exam prep</span></div><div class="card-desc">AI pinpoints which phonemes you mispronounce. TOEFL/IELTS prep included.</div><div class="card-footer"><span style="font-size:11px;color:#94A3B8;">★ 9.3</span><a class="card-link" href="https://www.elsaspeak.com" target="_blank">Visit →</a></div></div>
-        <div class="card"><div class="card-top"><div class="card-emoji">💬</div><span class="card-rank cr-2">#2</span></div><div class="card-name">iTalki</div><div style="margin:6px 0;"><span class="card-tag">1-on-1</span><span class="card-tag">Tutors</span></div><div class="card-desc">World's largest tutoring marketplace. Professional & community teachers.</div><div class="card-footer"><span style="font-size:11px;color:#94A3B8;">★ 9.0</span><a class="card-link" href="https://www.italki.com" target="_blank">Visit →</a></div></div>
-        <div class="card"><div class="card-top"><div class="card-emoji">🎥</div><span class="card-rank cr-3">#3</span></div><div class="card-name">Cambly</div><div style="margin:6px 0;"><span class="card-tag">On-demand</span><span class="card-tag">Native</span></div><div class="card-desc">Instant video chat with native tutors. No scheduling needed.</div><div class="card-footer"><span style="font-size:11px;color:#94A3B8;">★ 8.7</span><a class="card-link" href="https://www.cambly.com" target="_blank">Visit →</a></div></div>
-        <div class="card"><div class="card-top"><div class="card-emoji">📋</div><span class="card-rank cr-">#4</span></div><div class="card-name">Preply</div><div style="margin:6px 0;"><span class="card-tag">Marketplace</span></div><div class="card-desc">Personalized tutor matching with AI recommendations.</div><div class="card-footer"><span style="font-size:11px;color:#94A3B8;">★ 8.4</span><a class="card-link" href="https://www.preply.com" target="_blank">Visit →</a></div></div>
-        <div class="card"><div class="card-top"><div class="card-emoji">🎧</div><span class="card-rank cr-">#5</span></div><div class="card-name">Pimsleur</div><div style="margin:6px 0;"><span class="card-tag">Audio</span><span class="card-tag">Commute</span></div><div class="card-desc">30-min audio lessons with spaced recall. Excellent American English.</div><div class="card-footer"><span style="font-size:11px;color:#94A3B8;">★ 8.2</span><a class="card-link" href="https://www.pimsleur.com" target="_blank">Visit →</a></div></div>
-        <div class="card"><div class="card-top"><div class="card-emoji">🎤</div><span class="card-rank cr-">#6</span></div><div class="card-name">Speak</div><div style="margin:6px 0;"><span class="card-tag">AI convo</span><span class="card-tag">Mobile</span></div><div class="card-desc">Immersive AI speaking with ultra-low latency. Best for daily practice.</div><div class="card-footer"><span style="font-size:11px;color:#94A3B8;">★ 8.1</span><a class="card-link" href="https://www.speak.com" target="_blank">Visit →</a></div></div>
-      </div>
-    </div>
-
-    <div style="margin-bottom:36px;">
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;"><div style="width:36px;height:36px;border-radius:8px;background:rgba(245,158,11,0.06);display:flex;align-items:center;justify-content:center;font-size:16px;">📝</div><div><div style="font-size:16px;font-weight:700;color:#0F172A;">Vocabulary & Grammar</div><div style="font-size:11px;color:#94A3B8;">Build your word bank</div></div></div>
-      <div class="grid-auto">
-        <div class="card"><div class="card-top"><div class="card-emoji">🗂️</div><span class="card-rank cr-1">#1</span></div><div class="card-name">Anki</div><div style="margin:6px 0;"><span class="card-tag">SRS</span><span class="card-tag">Free</span></div><div class="card-desc">Most efficient vocabulary tool. 20 years of proven Spaced Repetition.</div><div class="card-footer"><span style="font-size:11px;color:#94A3B8;">★ 9.2</span><a class="card-link" href="https://apps.ankiweb.net" target="_blank">Visit →</a></div></div>
-        <div class="card"><div class="card-top"><div class="card-emoji">🌱</div><span class="card-rank cr-2">#2</span></div><div class="card-name">Memrise</div><div style="margin:6px 0;"><span class="card-tag">Native video</span><span class="card-tag">SRS</span></div><div class="card-desc">Short videos of locals speaking + SRS. More engaging than flashcards.</div><div class="card-footer"><span style="font-size:11px;color:#94A3B8;">★ 8.6</span><a class="card-link" href="https://www.memrise.com" target="_blank">Visit →</a></div></div>
-        <div class="card"><div class="card-top"><div class="card-emoji">✍️</div><span class="card-rank cr-3">#3</span></div><div class="card-name">Grammarly</div><div style="margin:6px 0;"><span class="card-tag">AI writing</span></div><div class="card-desc">AI-powered writing companion. Learn by writing — emails, reports.</div><div class="card-footer"><span style="font-size:11px;color:#94A3B8;">★ 8.8</span><a class="card-link" href="https://www.grammarly.com" target="_blank">Visit →</a></div></div>
-        <div class="card"><div class="card-top"><div class="card-emoji">📇</div><span class="card-rank cr-">#4</span></div><div class="card-name">Quizlet</div><div style="margin:6px 0;"><span class="card-tag">Flashcards</span><span class="card-tag">Free</span></div><div class="card-desc">Classic flashcard tool. Millions of shared community decks.</div><div class="card-footer"><span style="font-size:11px;color:#94A3B8;">★ 8.0</span><a class="card-link" href="https://quizlet.com" target="_blank">Visit →</a></div></div>
-        <div class="card"><div class="card-top"><div class="card-emoji">🦌</div><span class="card-rank cr-">#5</span></div><div class="card-name">LingoDeer</div><div style="margin:6px 0;"><span class="card-tag">Grammar</span><span class="card-tag">Details</span></div><div class="card-desc">Exceptionally detailed grammar explanations. Builds from fundamentals.</div><div class="card-footer"><span style="font-size:11px;color:#94A3B8;">★ 7.8</span><a class="card-link" href="https://www.lingodeer.com" target="_blank">Visit →</a></div></div>
-      </div>
-    </div>
-
-    <div style="margin-bottom:36px;">
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;"><div style="width:36px;height:36px;border-radius:8px;background:rgba(16,185,129,0.06);display:flex;align-items:center;justify-content:center;font-size:16px;">🤖</div><div><div style="font-size:16px;font-weight:700;color:#0F172A;">AI Speaking</div><div style="font-size:11px;color:#94A3B8;">2026's AI conversation partners</div></div></div>
-      <div class="grid-auto">
-        <div class="card"><div class="card-top"><div class="card-emoji">⭐</div><span class="card-rank cr-1">#1</span></div><div class="card-name">SpeakShark</div><div style="margin:6px 0;"><span class="card-tag">4 accents</span><span class="card-tag">Free 3/day</span></div><div class="card-desc">Four AI teachers (US/UK/AU/CA), open conversation, phoneme feedback.</div><div class="card-footer"><span style="font-size:11px;color:#94A3B8;">★ 9.0</span><a class="card-link" href="https://speakshark.com" target="_blank">Visit →</a></div></div>
-        <div class="card"><div class="card-top"><div class="card-emoji">💭</div><span class="card-rank cr-2">#2</span></div><div class="card-name">TalkPal</div><div style="margin:6px 0;"><span class="card-tag">100+ scen.</span><span class="card-tag">Adaptive</span></div><div class="card-desc">Immersive AI conversation with 100+ real-world scenarios.</div><div class="card-footer"><span style="font-size:11px;color:#94A3B8;">★ 8.5</span><a class="card-link" href="https://www.talkpal.ai" target="_blank">Visit →</a></div></div>
-        <div class="card"><div class="card-top"><div class="card-emoji">🎬</div><span class="card-rank cr-3">#3</span></div><div class="card-name">Jolii AI</div><div style="margin:6px 0;"><span class="card-tag">YouTube</span><span class="card-tag">Immersion</span></div><div class="card-desc">Learn through YouTube & Netflix. AI extracts vocabulary from videos.</div><div class="card-footer"><span style="font-size:11px;color:#94A3B8;">★ 8.4</span><a class="card-link" href="https://www.jolii.ai" target="_blank">Visit →</a></div></div>
-        <div class="card"><div class="card-top"><div class="card-emoji">💬</div><span class="card-rank cr-">#4</span></div><div class="card-name">Fluently</div><div style="margin:6px 0;"><span class="card-tag">Natural chat</span></div><div class="card-desc">ChatGPT-like AI for speaking practice. Real-time corrections.</div><div class="card-footer"><span style="font-size:11px;color:#94A3B8;">★ 8.0</span><a class="card-link" href="https://www.fluently.app" target="_blank">Visit →</a></div></div>
-        <div class="card"><div class="card-top"><div class="card-emoji">🎧</div><span class="card-rank cr-">#5</span></div><div class="card-name">Listen & Learn</div><div style="margin:6px 0;"><span class="card-tag">Business</span></div><div class="card-desc">Immersive platform for professionals. Real-world roleplay + AI.</div><div class="card-footer"><span style="font-size:11px;color:#94A3B8;">★ 8.2</span><a class="card-link" href="https://www.wynai.pro" target="_blank">Visit →</a></div></div>
-      </div>
-    </div>
-
-    <div style="margin-bottom:36px;">
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;"><div style="width:36px;height:36px;border-radius:8px;background:rgba(56,189,248,0.06);display:flex;align-items:center;justify-content:center;font-size:16px;">📻</div><div><div style="font-size:16px;font-weight:700;color:#0F172A;">Listening & Reading</div><div style="font-size:11px;color:#94A3B8;">Immersion through content</div></div></div>
-      <div class="grid-auto">
-        <div class="card"><div class="card-top"><div class="card-emoji">🏛️</div><span class="card-rank cr-1">#1</span></div><div class="card-name">British Council</div><div style="margin:6px 0;"><span class="card-tag">10k+ activ.</span><span class="card-tag">Free</span></div><div class="card-desc">World's most authoritative free resource. Graded reading & listening.</div><div class="card-footer"><span style="font-size:11px;color:#94A3B8;">★ 9.0</span><a class="card-link" href="https://learnenglish.britishcouncil.org" target="_blank">Visit →</a></div></div>
-        <div class="card"><div class="card-top"><div class="card-emoji">📖</div><span class="card-rank cr-2">#2</span></div><div class="card-name">LingQ</div><div style="margin:6px 0;"><span class="card-tag">Import</span><span class="card-tag">SRS</span></div><div class="card-desc">Import articles, blogs, YouTube. AI-assisted lookup + SRS review.</div><div class="card-footer"><span style="font-size:11px;color:#94A3B8;">★ 8.6</span><a class="card-link" href="https://www.lingq.com" target="_blank">Visit →</a></div></div>
-        <div class="card"><div class="card-top"><div class="card-emoji">📻</div><span class="card-rank cr-3">#3</span></div><div class="card-name">BBC Learning</div><div style="margin:6px 0;"><span class="card-tag">British</span><span class="card-tag">Free</span></div><div class="card-desc">6 Minute English, News Review. Premium British content.</div><div class="card-footer"><span style="font-size:11px;color:#94A3B8;">★ 8.8</span><a class="card-link" href="https://www.bbc.co.uk/learningenglish" target="_blank">Visit →</a></div></div>
-        <div class="card"><div class="card-top"><div class="card-emoji">🇺🇸</div><span class="card-rank cr-">#4</span></div><div class="card-name">VOA Learning</div><div style="margin:6px 0;"><span class="card-tag">American</span><span class="card-tag">Slow</span></div><div class="card-desc">Slowed-down American English news with full transcripts.</div><div class="card-footer"><span style="font-size:11px;color:#94A3B8;">★ 8.3</span><a class="card-link" href="https://learningenglish.voanews.com" target="_blank">Visit →</a></div></div>
-        <div class="card"><div class="card-top"><div class="card-emoji">⚡</div><span class="card-rank cr-">#5</span></div><div class="card-name">ESL Fast</div><div style="margin:6px 0;"><span class="card-tag">2,500+</span><span class="card-tag">Free</span></div><div class="card-desc">2,500+ conversations + 3,000+ stories with audio.</div><div class="card-footer"><span style="font-size:11px;color:#94A3B8;">★ 8.0</span><a class="card-link" href="https://www.eslfast.com" target="_blank">Visit →</a></div></div>
-      </div>
-    </div>
-
-    <div style="margin-bottom:36px;">
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;"><div style="width:36px;height:36px;border-radius:8px;background:rgba(239,68,68,0.06);display:flex;align-items:center;justify-content:center;font-size:16px;">💎</div><div><div style="font-size:16px;font-weight:700;color:#0F172A;">Free Hidden Gems</div><div style="font-size:11px;color:#94A3B8;">100% free, no sign-up required</div></div></div>
-      <div class="grid-auto">
-        <div class="card"><div class="card-top"><div class="card-emoji">🎧</div><span class="card-rank cr-1">#1</span></div><div class="card-name">Lexinglo</div><div style="margin:6px 0;"><span class="card-tag">100% Free</span><span class="card-tag">No sign-up</span></div><div class="card-desc">1,745+ audio/video lessons, 836+ interactive exercises. All CEFR levels.</div><div class="card-footer"><span style="font-size:11px;color:#94A3B8;">★ 9.0</span><a class="card-link" href="https://lexinglo.com" target="_blank">Visit →</a></div></div>
-        <div class="card"><div class="card-top"><div class="card-emoji">🌐</div><span class="card-rank cr-2">#2</span></div><div class="card-name">EnglishClub</div><div style="margin:6px 0;"><span class="card-tag">Since 1997</span><span class="card-tag">Free</span></div><div class="card-desc">Veteran free resource since 1997. All skills covered.</div><div class="card-footer"><span style="font-size:11px;color:#94A3B8;">★ 8.6</span><a class="card-link" href="https://www.englishclub.com" target="_blank">Visit →</a></div></div>
-        <div class="card"><div class="card-top"><div class="card-emoji">📅</div><span class="card-rank cr-3">#3</span></div><div class="card-name">Free Daily English</div><div style="margin:6px 0;"><span class="card-tag">Daily</span><span class="card-tag">A1-B2</span></div><div class="card-desc">10 min/day: read a story, take a quiz, practice speaking.</div><div class="card-footer"><span style="font-size:11px;color:#94A3B8;">★ 8.2</span><a class="card-link" href="https://www.freedailyenglish.com" target="_blank">Visit →</a></div></div>
-        <div class="card"><div class="card-top"><div class="card-emoji">✈️</div><span class="card-rank cr-">#4</span></div><div class="card-name">Passport to English</div><div style="margin:6px 0;"><span class="card-tag">Course</span><span class="card-tag">3 levels</span></div><div class="card-desc">Complete free curriculum from zero. Beginning → Advanced.</div><div class="card-footer"><span style="font-size:11px;color:#94A3B8;">★ 7.8</span><a class="card-link" href="https://www.passporttoenglish.com" target="_blank">Visit →</a></div></div>
-        <div class="card"><div class="card-top"><div class="card-emoji">🎯</div><span class="card-rank cr-">#5</span></div><div class="card-name">Loecsen</div><div style="margin:6px 0;"><span class="card-tag">A1 beginner</span><span class="card-tag">Scenarios</span></div><div class="card-desc">Beginner A1 course with 17 practical scenarios. 15 min/day.</div><div class="card-footer"><span style="font-size:11px;color:#94A3B8;">★ 7.6</span><a class="card-link" href="https://www.loecsen.com" target="_blank">Visit →</a></div></div>
-      </div>
+  <div class="rec-section">
+    <div style="font-size:15px;font-weight:700;color:var(--text);margin-bottom:16px;" data-zh="✦ 推荐组合">✦ Recommended Stacks</div>
+    <div class="rec-grid">
+      <div class="rec-item"><span class="rec-emoji">🌱</span><span class="rec-text" data-zh="初学者 → Duolingo + Lexinglo">Beginner → <strong>Duolingo</strong> + <strong>Lexinglo</strong></span></div>
+      <div class="rec-item"><span class="rec-emoji">🗣️</span><span class="rec-text" data-zh="口语 → SpeakShark + ELSA">Speaking → <strong>SpeakShark</strong> + <strong>ELSA</strong></span></div>
+      <div class="rec-item"><span class="rec-emoji">🚀</span><span class="rec-text" data-zh="进阶 → LingQ + iTalki">Advanced → <strong>LingQ</strong> + <strong>iTalki</strong></span></div>
+      <div class="rec-item"><span class="rec-emoji">🎓</span><span class="rec-text" data-zh="考试 → British Council + Anki">Exam → <strong>British Council</strong> + <strong>Anki</strong></span></div>
+      <div class="rec-item"><span class="rec-emoji">🎧</span><span class="rec-text" data-zh="通勤 → Pimsleur + BBC">Commute → <strong>Pimsleur</strong> + <strong>BBC</strong></span></div>
     </div>
   </div>
-
 </div>
 
-<footer>
-  <div class="container">
-    <p>Shadow · AI-Powered English Learning · Built on the Shang Wenjie Method · Updated June 2026</p>
-  </div>
-</footer>
+</main>
 
 <script>
 (function() {
   // waveform
-  const wf = document.getElementById('waveform');
-  if (wf) for (let i = 0; i < 48; i++) {
-    const b = document.createElement('div');
+  var wf = document.getElementById('waveform');
+  if (wf) for (var i = 0; i < 48; i++) {
+    var b = document.createElement('div');
     b.className = 'wf-bar' + (i >= 10 && i < 18 ? ' active' : '') + (i === 14 ? ' now' : '');
     b.style.height = (10 + Math.random() * 60) + 'px';
     wf.appendChild(b);
   }
 
   // chart
-  const chart = document.getElementById('progressChart');
+  var chart = document.getElementById('progressChart');
   if (chart) {
-    const data = [65, 72, 68, 78, 82, 79, 87];
-    data.forEach((v, i) => {
-      const b = document.createElement('div');
+    var data = [65, 72, 68, 78, 82, 79, 87];
+    data.forEach(function(v, i) {
+      var b = document.createElement('div');
       b.className = 'chart-bar' + (i >= data.length - 1 ? ' active' : '');
       b.style.height = (v / 100 * 140) + 'px';
-      const l = document.createElement('span'); l.className = 'cb-label'; l.textContent = v + '%';
+      var l = document.createElement('span'); l.className = 'cb-label'; l.textContent = v + '%';
       b.appendChild(l); chart.appendChild(b);
     });
   }
 
-  // nav
-  document.querySelectorAll('.nav-link').forEach(l => l.addEventListener('click', function() {
-    document.querySelectorAll('.nav-link').forEach(x => x.classList.remove('active'));
-    this.classList.add('active');
-  }));
+  // sidebar navigation
+  document.querySelectorAll('.si-item:not(.locked)').forEach(function(item) {
+    item.addEventListener('click', function(e) {
+      e.preventDefault();
+      var sec = this.dataset.section;
+      document.querySelectorAll('.si-item').forEach(function(s) { s.classList.remove('active'); });
+      this.classList.add('active');
+      document.querySelectorAll('.section').forEach(function(s) { s.classList.remove('active'); });
+      var target = document.getElementById('sec-' + sec);
+      if (target) target.classList.add('active');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  });
 
   // mode chips
-  document.querySelectorAll('.mode-chip').forEach(c => c.addEventListener('click', function() {
-    document.querySelectorAll('.mode-chip').forEach(x => x.classList.remove('active'));
-    this.classList.add('active');
-  }));
+  document.querySelectorAll('.mode-chip').forEach(function(c) {
+    c.addEventListener('click', function() {
+      document.querySelectorAll('.mode-chip').forEach(function(x) { x.classList.remove('active'); });
+      this.classList.add('active');
+    });
+  });
 
   // studio tabs
-  document.querySelectorAll('.st-tab').forEach(tab => tab.addEventListener('click', function() {
-    document.querySelectorAll('.st-tab').forEach(t => t.classList.remove('active'));
-    document.querySelectorAll('.st-panel').forEach(p => p.classList.remove('active'));
-    this.classList.add('active');
-    document.getElementById('st-' + this.dataset.stpanel).classList.add('active');
-  }));
+  document.querySelectorAll('.st-tab').forEach(function(tab) {
+    tab.addEventListener('click', function() {
+      document.querySelectorAll('.st-tab').forEach(function(t) { t.classList.remove('active'); });
+      document.querySelectorAll('.st-panel').forEach(function(p) { p.classList.remove('active'); });
+      this.classList.add('active');
+      document.getElementById('st-' + this.dataset.stpanel).classList.add('active');
+    });
+  });
 
   // record button
   document.getElementById('recBtn')?.addEventListener('click', function() {
-    const ind = document.getElementById('recIndicator');
-    const active = ind.classList.toggle('active');
+    var ind = document.getElementById('recIndicator');
+    var active = ind.classList.toggle('active');
     this.textContent = active ? '■ Stop' : '● Record';
   });
 
   // plan tabs
-  document.querySelectorAll('.plan-tab').forEach(tab => tab.addEventListener('click', function() {
-    document.querySelectorAll('.plan-tab').forEach(t => t.classList.remove('active'));
-    document.querySelectorAll('.plan-panel').forEach(p => p.classList.remove('active'));
-    this.classList.add('active');
-    document.getElementById('panel-' + this.dataset.tab).classList.add('active');
-  }));
+  document.querySelectorAll('.plan-tab').forEach(function(tab) {
+    tab.addEventListener('click', function() {
+      document.querySelectorAll('.plan-tab').forEach(function(t) { t.classList.remove('active'); });
+      document.querySelectorAll('.plan-panel').forEach(function(p) { p.classList.remove('active'); });
+      this.classList.add('active');
+      document.getElementById('panel-' + this.dataset.tab).classList.add('active');
+    });
+  });
 
   // CEFR steps
-  document.querySelectorAll('.cefr-step').forEach(step => step.addEventListener('click', function() {
-    const level = this.dataset.level;
-    const levels = ['A1','A2','B1','B2','C1','C2'];
-    document.querySelectorAll('.cefr-step').forEach(s => {
-      s.classList.toggle('reached', levels.indexOf(s.dataset.level) <= levels.indexOf(level));
+  document.querySelectorAll('.cefr-step').forEach(function(step) {
+    step.addEventListener('click', function() {
+      var level = this.dataset.level;
+      var levels = ['A1','A2','B1','B2','C1','C2'];
+      document.querySelectorAll('.cefr-step').forEach(function(s) {
+        s.classList.toggle('reached', levels.indexOf(s.dataset.level) <= levels.indexOf(level));
+      });
+      document.getElementById('cefrTargetDisplay').textContent = level;
+      document.querySelectorAll('.table-wrap tbody tr').forEach(function(r) {
+        r.classList.toggle('hl', r.dataset.cefr === level);
+      });
     });
-    document.getElementById('cefrTargetDisplay').textContent = level;
-    document.querySelectorAll('.table-wrap tbody tr').forEach(r => {
-      r.classList.toggle('hl', r.dataset.cefr === level);
-    });
-  }));
-  document.querySelector('.cefr-step[data-level="B2"]')?.click();
+  });
+  var initStep = document.querySelector('.cefr-step[data-level="B2"]');
+  if (initStep) initStep.click();
 
-  // Continue button — simulates progress
-  let progressState = 72;
+  // Continue button
+  var progressState = 72;
   document.getElementById('continueBtn')?.addEventListener('click', function() {
-    if (progressState >= 100) {
-      this.textContent = '✓ Completed';
-      this.style.background = '#10B981';
-      return;
-    }
-    const steps = [72, 85, 93, 100];
-    const labels = ['Shadowing Practice', 'Recording & Compare', 'Final Review', 'Complete!'];
+    if (progressState >= 100) { this.textContent = '✓ Done'; this.style.background = 'var(--accent)'; return; }
+    var steps = [72, 85, 93, 100];
     progressState = steps[Math.min(Math.floor(progressState / 15), 3)] || 100;
-    const idx = Math.min(Math.floor(progressState / 25), 3);
     document.getElementById('focusFill').style.width = progressState + '%';
     document.getElementById('focusPct').textContent = progressState + '%';
-    const sub = document.querySelector('.focus-sub');
-    if (sub && labels[idx]) sub.textContent = 'Step 2 of 4 · ' + labels[idx];
-    if (progressState >= 100) {
-      this.textContent = '✓ Completed';
-      this.style.background = '#10B981';
-    }
+    if (progressState >= 100) { this.textContent = '✓ Done'; this.style.background = 'var(--accent)'; }
   });
 
   // Mission check toggle
-  document.querySelectorAll('.mission-item').forEach(item => {
+  document.querySelectorAll('.mission-item').forEach(function(item) {
     item.addEventListener('click', function() {
       this.classList.toggle('done');
       if (this.classList.contains('done') && this.classList.contains('current')) {
         this.classList.remove('current');
-        const next = this.nextElementSibling;
-        if (next && next.classList.contains('mission-item')) {
-          next.classList.add('current');
-        }
+        var next = this.nextElementSibling;
+        if (next && next.classList.contains('mission-item')) next.classList.add('current');
       }
     });
   });
 
-  /* === TRANSLATION DICT & TOOLTIP === */
+  // TRANSLATION DICT
   var dict = {
-    "Home":"首页","Method":"方法","Resources":"资源","Launch App":"启动应用",
-    "Dashboard":"仪表盘","Studio":"学习室","Progress":"进度",
-    "AI-Powered · Shang Wenjie Method":"AI驱动 · 尚雯婕方法",
-    "Learn English with the":"学习英语，通过","Shang Wenjie Method":"尚雯婕方法",
-    "10 curated materials · 4 training steps · 10 months to transform your English from hesitant to fluent.":"10个精选材料·4个训练步骤·10个月让你的英语从犹豫到流利",
-    "Start Learning":"开始学习","Browse Resources":"浏览资源",
-    "Your Learning Journey":"你的学习之旅",
-    "Assessment":"水平测试","Find your starting level":"找到你的起点",
-    "Blind Dictation":"盲听听写","Listen & transcribe without script":"不看书稿，听写全文",
-    "Shadowing":"影子跟读","Mimic intonation & rhythm":"模仿语调和节奏",
-    "Speed Match":"语速匹配","Recite at native speed":"以原速背诵",
-    "Fluency":"流利表达","Words flow like instinct":"语言如本能般流畅",
-    "Curated learning tools":"精选学习工具",
-    "30 hand-picked resources across 6 categories, ranked by real-world impact":"30个精选资源，覆盖6个类别，按实际效果排名",
-    "Comprehensive Platforms":"综合平台","All-in-one learning systems":"一站式学习系统",
-    "Speaking & Pronunciation":"口语与发音","Speech accuracy and fluency":"发音准确度和流利度",
-    "Vocabulary & Grammar":"词汇与语法","Build your word bank":"建立你的词库",
-    "AI Speaking":"AI口语","2026's AI conversation partners":"2026年的AI对话伙伴",
-    "Listening & Reading":"听力与阅读","Immersion through content":"通过内容沉浸",
-    "Free Hidden Gems":"免费隐藏宝藏","100% free, no sign-up required":"完全免费，无需注册",
-    "Duolingo":"多邻国","Babbel":"巴比贝尔","Rosetta Stone":"罗塞塔石碑",
-    "Busuu":"博树","Lingoda":"林戈达","Fluenz":"弗伦兹",
-    "ELSA Speak":"ELSA口语","iTalki":"爱拓奇","Cambly":"坎布利",
-    "Preply":"普雷普利","Pimsleur":"皮姆斯勒","Speak":"口语说",
-    "Anki":"安琪","Memrise":"记忆rise","Grammarly":"语法检查",
-    "Quizlet":"问答集","LingoDeer":"语鹿",
-    "SpeakShark":"口语鲨鱼","TalkPal":"谈话伙伴","Jolii AI":"乔利AI",
-    "Fluently":"流利说","Listen & Learn":"听与学",
-    "British Council":"英国文化协会","LingQ":"灵Q","BBC Learning":"BBC学习",
-    "VOA Learning":"VOA学习","ESL Fast":"ESL速成",
-    "Lexinglo":"乐学英语","EnglishClub":"英语俱乐部","Free Daily English":"每日免费英语",
-    "Passport to English":"英语护照","Loecsen":"罗森",
+    "Home":"首页","Method":"方法","Resources":"资源",
+    "Dashboard":"仪表盘","Daily Input":"每日输入","Shadowing Studio":"影子跟读室",
+    "Output Challenge":"输出挑战","Progress Tracker":"进度追踪",
+    "Search resources, pieces...":"搜索资源、文章...","Notifications":"通知",
+    "Learning Journey":"学习之旅","Overall Progress":"整体进度","3 of 10 pieces":"3/10 篇完成",
+    "Welcome back":"欢迎回来","Current Focus":"当前焦点",
+    "Piece 3 — The Power of Vulnerability":"第3篇 — 脆弱的力量",
+    "Step 2 of 4 · Shadowing Practice":"第2步/共4步 · 影子跟读练习",
+    "~15 min left":"还剩约15分钟","Continue":"继续学习",
+    "Today's Mission":"今日任务","3 tasks":"3个任务",
+    "Dictation — Piece 3 (92%)":"听写 — 第3篇（准确率92%）",
+    "Shadowing — Record & Compare":"跟读 — 录音并对比",
+    "New Words — Review 48 cards":"生词 — 复习48张卡片",
+    "Weekly Progress":"每周进度","This week":"本周","Accuracy":"准确率","Streak":"连续天数",
+    "Recent Activity":"最近活动",
+    "Today's Recommended Materials":"今日推荐材料",
+    "15-30 min daily input to build language instinct":"每天15-30分钟输入，建立语感",
+    "The Power of Vulnerability":"脆弱的力量","Current Piece":"当前篇目",
+    "6 Minute English":"6分钟英语","Recommended":"推荐",
+    "VOA Learning English":"慢速英语新闻","Dictation":"听写练习",
+    "TED Talks Daily":"TED每日推荐","Advanced":"进阶",
+    "Shadowing Practice":"跟读练习",
+    "Listen · Dictate · Record · Compare":"听写 · 跟读 · 录音 · 对比",
+    "Transcript":"文稿","Recording":"录音","AI Feedback":"AI反馈",
+    "Listen":"听","Dictation":"听写","Shadow":"跟读","Speed Match":"语速匹配",
+    "View Recording":"查看录音","No recordings yet":"暂无录音",
+    "Click Record to capture your shadowing practice":"点击录音开始捕捉你的跟读",
+    "Pronunciation — Good":"发音 — 良好","Intonation — Needs work":"语调 — 需改进",
+    "Rhythm — Good":"节奏 — 良好","Linking — Watch out":"连读 — 注意",
+    "Speaking Output Practice":"口语输出练习",
+    "Transform input into output — truly master the language":"将输入转化为输出 — 真正掌握语言",
+    "Not yet unlocked":"尚未解锁",
+    "Complete Piece 3 to unlock. You'll get AI conversation practice, speech challenges, and writing tasks.":"完成第3篇后解锁。可获得AI对话练习、演讲挑战和写作任务。",
+    "Your Learning Path":"你的学习路径",
+    "基础":"Foundation","中级":"Intermediate","中高级":"Upper Intermediate",
+    "高级":"Advanced","精通":"Proficient",
+    "Dictation Accuracy":"听写准确率",
+    "Last 7 sessions · target: 90%":"最近7次 · 目标: 90%",
+    "Current Level":"当前等级","~1,200 more words to B2":"还需约1,200词达到B2",
+    "Learning Plan":"学习计划","CEFR Ability Ladder":"CEFR能力阶梯",
+    "Choose Your Goal":"选择你的目标","Set your goals":"设定你的目标",
+    "Beginner":"入门","Elementary":"基础","Intermediate":"中级",
+    "Upper Int.":"中高级","Advanced":"高级","Proficient":"精通",
+    "Description":"描述",
+    "Basic words, slow speech":"基础词汇，慢速",
+    "Daily phrases, directions":"日常短语、指路",
+    "Travel, work basics":"旅行、工作基础",
+    "Daily fluency 🎯 Uni min.":"日常流利 🎯 大学最低要求",
+    "Academic fluency 🎯 Top uni":"学术流利 🎯 顶尖大学",
+    "Native-level mastery":"母语水平掌握",
+    "Target":"目标","Vocabulary":"词汇量","Duration":"时长",
     "Recommended Stacks":"推荐组合",
     "Beginner":"初学者","Speaking":"口语","Advanced":"进阶","Exam":"考试","Commute":"通勤",
-    "Global #1 free English app. Gamified daily habit, structured progression. New AI conversation feature.":"全球第一的免费英语应用。游戏化的每日习惯，结构化进阶。全新AI对话功能。",
-    "Best grammar explanations. 10-15 min lessons, A1-B2, native audio.":"最佳语法讲解。10-15分钟课程，A1-B2级别，母语者音频。",
-    "Pioneer of immersive learning. English-only with TruAccent speech recognition.":"沉浸式学习的先驱。全英文环境，TruAccent语音识别技术。",
-    "655+ lessons A1-C1. Native speaker corrections + AI speaking.":"655+课程A1-C1。母语者纠错+AI口语练习。",
-    "Live online classes with professional teachers. Sprint cashback.":"专业教师在线直播课程。冲刺班有返现奖励。",
-    "Instructor-led video lessons with clear logical progression.":"讲师引导的视频课程，逻辑清晰的进阶路径。",
-    "AI pinpoints which phonemes you mispronounce. TOEFL/IELTS prep included.":"AI精准定位你发错的音素。包含托福/雅思备考。",
-    "World's largest tutoring marketplace. Professional & community teachers.":"全球最大的家教市场。专业教师和社区教师。",
-    "Instant video chat with native tutors. No scheduling needed.":"与母语导师即时视频通话。无需预约。",
-    "Personalized tutor matching with AI recommendations.":"AI推荐个性化导师匹配。",
-    "30-min audio lessons with spaced recall. Excellent American English.":"30分钟音频课程，间隔回忆。地道美式英语。",
-    "Immersive AI speaking with ultra-low latency. Best for daily practice.":"超低延迟沉浸式AI口语。最适合日常练习。",
-    "Most efficient vocabulary tool. 20 years of proven Spaced Repetition.":"最高效的词汇工具。20年验证的间隔重复技术。",
-    "Short videos of locals speaking + SRS. More engaging than flashcards.":"当地人说话短视频+SRS。比闪卡更有趣。",
-    "AI-powered writing companion. Learn by writing — emails, reports.":"AI写作助手。通过写作学习 — 邮件、报告。",
-    "Classic flashcard tool. Millions of shared community decks.":"经典闪卡工具。数百万共享社区词库。",
-    "Exceptionally detailed grammar explanations. Builds from fundamentals.":"极其详细的语法讲解。从基础开始建构。",
-    "Four AI teachers (US/UK/AU/CA), open conversation, phoneme feedback.":"四位AI教师(美/英/澳/加)，自由对话，音素反馈。",
-    "Immersive AI conversation with 100+ real-world scenarios.":"沉浸式AI对话，100+真实场景。",
-    "Learn through YouTube & Netflix. AI extracts vocabulary from videos.":"通过YouTube和Netflix学习。AI从视频中提取词汇。",
-    "ChatGPT-like AI for speaking practice. Real-time corrections.":"类ChatGPT的AI口语练习。实时纠正。",
-    "Immersive platform for professionals. Real-world roleplay + AI.":"面向专业人士的沉浸式平台。真实场景角色扮演+AI。",
-    "World's most authoritative free resource. Graded reading & listening.":"全球最权威的免费资源。分级阅读和听力。",
-    "Import articles, blogs, YouTube. AI-assisted lookup + SRS review.":"导入文章、博客、YouTube。AI辅助查词+SRS复习。",
-    "6 Minute English, News Review. Premium British content.":"六分钟英语、新闻回顾。优质英式内容。",
-    "Slowed-down American English news with full transcripts.":"慢速美式英语新闻，附带完整文稿。",
-    "2,500+ conversations + 3,000+ stories with audio.":"2500+对话+3000+故事，均含音频。",
-    "1,745+ audio/video lessons, 836+ interactive exercises. All CEFR levels.":"1745+音视频课程，836+互动练习。覆盖所有CEFR级别。",
-    "Veteran free resource since 1997. All skills covered.":"自1997年的老牌免费资源。涵盖所有技能。",
-    "10 min/day: read a story, take a quiz, practice speaking.":"每天10分钟：读故事、做测验、练口语。",
-    "Complete free curriculum from zero. Beginning → Advanced.":"从零开始的完整免费课程。初级到高级。",
-    "Beginner A1 course with 17 practical scenarios. 15 min/day.":"A1初学者课程，17个实用场景。每天15分钟。",
-    "Gamified":"游戏化","Structured":"结构化","Immersive":"沉浸式","Speech AI":"语音AI",
-    "Community":"社区","CEFR":"欧洲语言标准","Live classes":"直播课","Video":"视频",
-    "Phoneme AI":"音素AI","Exam prep":"备考","1-on-1":"一对一","Tutors":"导师",
-    "On-demand":"按需","Native":"母语","Marketplace":"市场","Audio":"音频","Commute":"通勤",
-    "AI convo":"AI对话","Mobile":"移动端","SRS":"间隔重复","Free":"免费",
-    "Native video":"本地视频","AI writing":"AI写作","Flashcards":"闪卡","Grammar":"语法","Details":"细节",
-    "4 accents":"四种口音","Free 3/day":"每天免费3次","100+ scen.":"100+场景","Adaptive":"自适应",
-    "YouTube":"油管","Immersion":"沉浸","Natural chat":"自然对话","Business":"商务",
-    "10k+ activ.":"1万+活动","Import":"导入","British":"英式","American":"美式","2,500+":"超过2500",
-    "100% Free":"完全免费","No sign-up":"无需注册","Since 1997":"自1997","Daily":"每日",
-    "Course":"课程","3 levels":"3个级别","A1 beginner":"A1初学者","Scenarios":"场景",
-    "Visit":"访问","★ 9.5":"评分 9.5","★ 9.0":"评分 9.0","★ 8.8":"评分 8.8",
-    "★ 8.5":"评分 8.5","★ 8.3":"评分 8.3","★ 8.0":"评分 8.0",
-    "★ 9.3":"评分 9.3","★ 8.7":"评分 8.7","★ 8.4":"评分 8.4","★ 8.2":"评分 8.2",
-    "★ 8.1":"评分 8.1","★ 9.2":"评分 9.2","★ 8.6":"评分 8.6","★ 7.8":"评分 7.8",
-    "Shadow · AI-Powered English Learning · Built on the Shang Wenjie Method · Updated June 2026":"影子学习 · AI驱动的英语学习 · 基于尚雯婕方法 · 2026年6月更新",
-    "Shadow":"影子",
-    "Current Focus":"当前焦点","Piece 3 — The Power of Vulnerability":"第3篇 — 脆弱的力量",
-    "Step 2 of 4 · Shadowing Practice":"第2步/共4步 · 影子跟读练习",
-    "Continue Learning":"继续学习","Today's Mission":"今日任务",
-    "3 tasks":"3个任务","weekly Progress":"每周进度","Day 6 of 7":"第6/7天",
-    "Recent Activity":"最近活动","This week":"本周","Accuracy":"准确率","Streak":"连续天数",
-    "Shadowing Studio":"影子跟读工作室",
-    "Listen · Dictate · Record · Compare — all in one place":"听写 · 录音 · 对比 — 一站式完成",
-    "Transcript":"文稿","Recording":"录音","AI Feedback":"AI反馈",
-    "No recordings yet":"暂无录音","Click Record to start capturing your shadowing practice":"点击录音开始捕捉你的跟读练习",
-    "Progress & Planning":"进度与规划","Your learning path":"你的学习路径",
-    "Dictation Accuracy":"听写准确率","Last 7 sessions · target: 90%":"最近7次 · 目标: 90%",
-    "Current Level":"当前等级","Set your goals":"设定你的目标",
-    "Learning Plan":"学习计划"
+    "Continue the journey":"继续你的旅程","Check":"查看",
+    "Your learning path":"你的学习路径","Complete":"完成",
+    "of":"/","pieces":"篇","days":"天",
+    "hours":"小时","min":"分钟"
   };
 
   // floating tooltip
-  var tp = document.createElement('div');
-  tp.className = 'tp';
-  document.body.appendChild(tp);
-
+  var tp = document.createElement('div'); tp.className = 'tp'; document.body.appendChild(tp);
   document.addEventListener('mouseover', function(e) {
     var el = e.target.closest('[data-zh]');
-    if (el && el.dataset.zh) {
-      tp.textContent = el.dataset.zh;
-      tp.classList.add('show');
-    }
+    if (el && el.dataset.zh) { tp.textContent = el.dataset.zh; tp.classList.add('show'); }
   });
-
   document.addEventListener('mouseout', function(e) {
-    if (!e.target.closest('[data-zh]') || (e.relatedTarget && !e.relatedTarget.closest('[data-zh]'))) {
-      tp.classList.remove('show');
-    }
+    if (!e.target.closest('[data-zh]') || (e.relatedTarget && !e.relatedTarget.closest('[data-zh]'))) tp.classList.remove('show');
   });
-
   document.addEventListener('mousemove', function(e) {
     if (tp.classList.contains('show')) {
-      var x = e.clientX + 14;
-      var y = e.clientY + 14;
-      var r = tp.getBoundingClientRect();
-      var tw = r.width || 0;
-      var th = r.height || 0;
+      var x = e.clientX + 14, y = e.clientY + 14, r = tp.getBoundingClientRect();
+      var tw = r.width || 0, th = r.height || 0;
       if (x + tw > window.innerWidth - 10) x = window.innerWidth - tw - 10;
       if (y + th > window.innerHeight - 10) y = e.clientY - th - 8;
-      tp.style.left = Math.max(4, x) + 'px';
-      tp.style.top = Math.max(4, y) + 'px';
+      tp.style.left = Math.max(4, x) + 'px'; tp.style.top = Math.max(4, y) + 'px';
     }
   });
 
   // auto-apply data-zh from dictionary
   function applyDict(el) {
     var text = (el.childNodes.length === 1 && el.childNodes[0].nodeType === 3) ? el.childNodes[0].textContent.trim() : '';
-    if (text && dict[text] && !el.hasAttribute('data-zh')) {
-      el.setAttribute('data-zh', dict[text]);
-    }
+    if (text && dict[text] && !el.hasAttribute('data-zh')) el.setAttribute('data-zh', dict[text]);
     for (var i = 0; i < el.children.length; i++) applyDict(el.children[i]);
   }
   applyDict(document.body);
 
-  // resource price & skill injection
+  // resource price & skill
   var resInfo = {
     "Duolingo":{p:"Free",s:["🎧","🗣️","📖","✍️"]},
     "Babbel":{p:"$$",s:["📝","🗂️"]},
@@ -996,85 +968,33 @@ footer p { font-size: 13px; color: #64748B; }
     "Passport to English":{p:"Free",s:["📖","🎧"]},
     "Loecsen":{p:"Free",s:["🗣️","🗂️"]}
   };
-  document.querySelectorAll('.card').forEach(function(card) {
-    var nameEl = card.querySelector('.card-name');
-    if (!nameEl) return;
-    var name = nameEl.textContent.trim();
-    var info = resInfo[name];
-    if (!info) return;
-    var tagWrap = card.querySelector('[class*="card-tag"]') ? card.querySelector('[class*="card-tag"]').parentNode : null;
-    if (!tagWrap) return;
-    var pc = '';
-    if (info.p === 'Free') pc = 'price-free';
-    else if (info.p === 'Free tier') pc = 'price-trial';
-    else pc = 'price-paid';
-    var priceEl = document.createElement('span');
-    priceEl.className = 'card-tag ' + pc;
-    priceEl.textContent = info.p;
-    tagWrap.appendChild(priceEl);
-    info.s.forEach(function(skill) {
-      var s = document.createElement('span');
-      s.className = 'skill-pill';
-      s.textContent = skill;
-      tagWrap.appendChild(s);
-    });
-  });
+  // Note: resources section with cards uses same structure, applied via JS dict
+  // Price/skill info will be applied when resources section is added
 })();
-</script>
 
-<script>
 (function() {
   /* === PROTECTION === */
   var _ = {};
-
   document.addEventListener('contextmenu', function(e) { e.preventDefault(); return false; });
-
   document.addEventListener('keydown', function(e) {
-    if (
-      e.key === 'F12' ||
-      (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i' || e.key === 'J' || e.key === 'j' || e.key === 'C' || e.key === 'c')) ||
-      (e.ctrlKey && (e.key === 'U' || e.key === 'u' || e.key === 'S' || e.key === 's'))
-    ) {
-      e.preventDefault();
-      return false;
-    }
+    if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i' || e.key === 'J' || e.key === 'j' || e.key === 'C' || e.key === 'c')) || (e.ctrlKey && (e.key === 'U' || e.key === 'u' || e.key === 'S' || e.key === 's'))) { e.preventDefault(); return false; }
   });
-
-  var _check = function() {
-    var w = window.outerWidth - window.innerWidth > 160;
-    var h = window.outerHeight - window.innerHeight > 160;
-    if (w || h) _.flag = true;
-  };
-  _check();
-  window.addEventListener('resize', _check);
-
-  var _dbg = function() {
-    var start = performance.now();
-    debugger;
-    var end = performance.now();
-    if (end - start > 100) _.flag = true;
-  };
+  var _check = function() { var w = window.outerWidth - window.innerWidth > 160; var h = window.outerHeight - window.innerHeight > 160; if (w || h) _.flag = true; };
+  _check(); window.addEventListener('resize', _check);
+  var _dbg = function() { var start = performance.now(); debugger; var end = performance.now(); if (end - start > 100) _.flag = true; };
   setInterval(_dbg, 800);
-
   setInterval(function() {
     if (_.flag) {
       try { var _c = function() { console.log('%c⚠', 'font-size:100px'); console.clear(); _c(); }; _c(); } catch(e) {}
-      document.title = '⚠ Protected Content';
-      document.body.style.opacity = '0.3';
-      location.reload();
+      document.title = '⚠ Protected'; document.body.style.opacity = '0.3'; location.reload();
     }
   }, 500);
-
   setInterval(function() {
-    var tags = document.querySelectorAll('script, link, style');
-    var _hash = 0;
-    for (var i = 0; i < tags.length; i++) { _hash += tags[i].outerHTML.length; }
-    if (_hash < 1000) {
-      document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100vh;font-family:sans-serif;color:#333;"><p>Content integrity check failed.</p></div>';
-    }
+    var tags = document.querySelectorAll('script, link, style'); var _hash = 0;
+    for (var i = 0; i < tags.length; i++) _hash += tags[i].outerHTML.length;
+    if (_hash < 1000) document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100vh;font-family:sans-serif;color:#333;"><p>Integrity check failed.</p></div>';
   }, 3000);
 })();
 </script>
-<!-- WM:Shadow -->
 </body>
 </html>
