@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shadow — AI-Powered English Learning</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Inter', -apple-system, system-ui, sans-serif;
+  background: #F0F4F8; color: #0F172A; font-size: 16px; line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+  -webkit-user-select: none; user-select: none;
+}
+img, a, button, input, textarea, [contenteditable] { -webkit-user-select: auto; user-select: auto; }
+body::after {
+  content: ''; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  pointer-events: none; z-index: 999999; opacity: 0;
+  background: repeating-linear-gradient(0deg, transparent, transparent 40px, rgba(29,78,216,0.02) 40px, rgba(29,78,216,0.02) 41px);
+}
+.container { max-width: 1200px; margin: 0 auto; padding: 0 32px; }
+
+nav {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(248,250,252,0.8);
+  backdrop-filter: blur(16px) saturate(1.5);
+  border-bottom: 1px solid rgba(0,0,0,0.04);
+}
+nav .container { display: flex; align-items: center; height: 68px; gap: 28px; }
+.nav-logo {
+  font-size: 20px; font-weight: 800; letter-spacing: -0.5px;
+  color: #0F172A; text-decoration: none; display: flex; align-items: center; gap: 8px;
+  flex-shrink: 0;
+}
+.nav-logo svg { width: 24px; height: 24px; }
+.nav-links { display: flex; gap: 2px; }
+.nav-link {
+  font-size: 13px; font-weight: 500; color: #475569;
+  text-decoration: none; padding: 7px 14px; border-radius: 8px;
+  transition: all 0.2s; white-space: nowrap;
+}
+.nav-link:hover { color: #0F172A; background: rgba(0,0,0,0.04); }
+.nav-link.active { color: #1D4ED8; background: rgba(29,78,216,0.06); }
+
+.section { padding: 72px 0; }
+.section-header { margin-bottom: 40px; }
+.section-label {
+  font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
+  color: #1D4ED8; margin-bottom: 10px;
+}
+.section-title {
+  font-size: 32px; font-weight: 700; letter-spacing: -0.5px;
+  color: #0F172A; line-height: 1.2;
+}
+.section-desc { font-size: 15px; line-height: 1.7; color: #475569; margin-top: 6px; max-width: 560px; }
+
+.btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 12px 28px; border-radius: 10px;
+  font-size: 14px; font-weight: 600; text-decoration: none;
+  transition: all 0.2s; border: none; font-family: inherit; cursor: pointer;
+}
+.btn-primary { background: #1D4ED8; color: #fff; box-shadow: 0 1px 3px rgba(29,78,216,0.2); }
+.btn-primary:hover { background: #1E40AF; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(29,78,216,0.25); }
+.btn-secondary { background: transparent; color: #0F172A; border: 1px solid rgba(0,0,0,0.08); }
+.btn-secondary:hover { background: rgba(0,0,0,0.04); border-color: rgba(0,0,0,0.12); }
+.btn-lg { padding: 16px 36px; font-size: 15px; border-radius: 12px; }
+
+.badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 5px 14px 5px 6px; border-radius: 100px;
+  background: rgba(29,78,216,0.06); color: #1D4ED8;
+  font-size: 11px; font-weight: 600; border: 1px solid rgba(29,78,216,0.08);
+}
+.badge-dot { width: 6px; height: 6px; border-radius: 50%; background: #1D4ED8; }
+
+/* HERO */
+.hero { padding: 80px 0 64px; }
+.hero-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
+.hero h1 {
+  font-size: clamp(40px, 5.5vw, 56px); font-weight: 800; letter-spacing: -2px;
+  line-height: 1.06; color: #0F172A;
+}
+.hero h1 .grad {
+  background: linear-gradient(135deg, #1D4ED8 0%, #7C3AED 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.hero-sub { font-size: 16px; line-height: 1.8; color: #475569; max-width: 460px; margin: 18px 0 0; }
+.hero-actions { display: flex; gap: 10px; margin-top: 28px; flex-wrap: wrap; }
+.hero-visual { background: #fff; border-radius: 20px; border: 1px solid rgba(0,0,0,0.04); padding: 28px; box-shadow: 0 8px 24px rgba(0,0,0,0.04); }
+.jv-title { font-size: 11px; font-weight: 600; color: #94A3B8; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 16px; }
+.jv-step { display: flex; align-items: center; gap: 14px; padding: 12px 16px; border-radius: 10px; margin-bottom: 6px; background: rgba(0,0,0,0.02); transition: all 0.2s; }
+.jv-step:last-child { margin-bottom: 0; }
+.jv-step.active { background: rgba(29,78,216,0.04); border: 1px solid rgba(29,78,216,0.08); }
+.jv-num { width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; background: rgba(0,0,0,0.04); color: #94A3B8; flex-shrink: 0; }
+.jv-step.active .jv-num { background: #1D4ED8; color: #fff; }
+.jv-label { font-size: 14px; font-weight: 600; color: #0F172A; flex: 1; }
+.jv-desc { font-size: 12px; color: #64748B; }
+.jv-step.active .jv-label { color: #1D4ED8; }
+.jv-arrow { text-align: center; color: #CBD5E1; font-size: 12px; padding: 2px 0; }
+
+/* METHOD */
+.mn-block { background: linear-gradient(135deg, rgba(29,78,216,0.03), rgba(124,58,237,0.03)); border-radius: 16px; padding: 32px; border: 1px solid rgba(29,78,216,0.06); margin-bottom: 28px; display: flex; align-items: center; gap: 32px; flex-wrap: wrap; }
+.mn-content { flex: 1; min-width: 260px; }
+.mn-badge { display: inline-block; font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; padding: 4px 10px; border-radius: 6px; background: rgba(29,78,216,0.06); color: #1D4ED8; margin-bottom: 10px; }
+.mn-title { font-size: 22px; font-weight: 800; color: #0F172A; line-height: 1.3; margin-bottom: 8px; }
+.mn-desc { font-size: 14px; line-height: 1.8; color: #475569; }
+.mn-stats { display: flex; gap: 24px; flex-shrink: 0; }
+.mn-stat { text-align: center; }
+.mn-stat-num { font-size: 32px; font-weight: 900; color: #1D4ED8; line-height: 1; }
+.mn-stat-label { font-size: 10px; color: #94A3B8; margin-top: 2px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em; }
+
+.mn-steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 28px; }
+.mn-step { background: #fff; border-radius: 14px; padding: 24px; border: 1px solid rgba(0,0,0,0.04); box-shadow: 0 1px 3px rgba(0,0,0,0.02); transition: all 0.3s; }
+.mn-step:hover { box-shadow: 0 8px 24px rgba(0,0,0,0.06); transform: translateY(-2px); border-color: rgba(0,0,0,0.06); }
+.ms-num { font-size: 40px; font-weight: 900; line-height: 1; color: rgba(29,78,216,0.1); margin-bottom: 4px; }
+.ms-ico { font-size: 24px; margin-bottom: 6px; }
+.ms-tit { font-size: 17px; font-weight: 700; color: #0F172A; margin-bottom: 6px; }
+.ms-desc { font-size: 13px; line-height: 1.7; color: #475569; }
+
+.tl { position: relative; padding-left: 24px; margin-bottom: 28px; }
+.tl::before { content: ''; position: absolute; left: 9px; top: 4px; bottom: 4px; width: 2px; background: linear-gradient(180deg, #1D4ED8, #7C3AED); border-radius: 2px; }
+.tl-item { position: relative; padding: 14px 18px; margin-bottom: 10px; background: #fff; border-radius: 12px; border: 1px solid rgba(0,0,0,0.04); display: flex; align-items: flex-start; gap: 14px; flex-wrap: wrap; }
+.tl-item::before { content: ''; position: absolute; left: -19px; top: 20px; width: 8px; height: 8px; border-radius: 50%; background: #1D4ED8; border: 2px solid #F8FAFC; }
+.tl-month { font-size: 12px; font-weight: 700; color: #1D4ED8; padding: 3px 8px; border-radius: 4px; background: rgba(29,78,216,0.04); flex-shrink: 0; }
+.tl-content { flex: 1; min-width: 180px; }
+.tl-content-title { font-size: 15px; font-weight: 600; color: #0F172A; margin-bottom: 4px; }
+.tl-content-desc { font-size: 13px; line-height: 1.7; color: #475569; }
+.tl-tag { font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 4px; background: rgba(124,58,237,0.06); color: #7C3AED; white-space: nowrap; }
+
+/* CARDS */
+.card {
+  background: #fff; border-radius: 16px; padding: 28px;
+  border: 1px solid rgba(0,0,0,0.04);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+  transition: all 0.3s;
+}
+.card:hover { box-shadow: 0 8px 24px rgba(0,0,0,0.06); transform: translateY(-2px); border-color: rgba(0,0,0,0.06); }
+.card-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 14px; }
+.card-emoji { width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; background: rgba(0,0,0,0.03); flex-shrink: 0; }
+.card-rank { font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 6px; }
+.cr-1 { background: rgba(29,78,216,0.06); color: #1D4ED8; }
+.cr-2 { background: rgba(124,58,237,0.06); color: #7C3AED; }
+.cr-3 { background: rgba(16,185,129,0.06); color: #10B981; }
+.cr- { background: rgba(0,0,0,0.03); color: #64748B; }
+.card-name { font-size: 18px; font-weight: 700; color: #0F172A; margin-bottom: 2px; }
+.card-tag { font-size: 11px; font-weight: 500; padding: 3px 10px; border-radius: 6px; background: rgba(0,0,0,0.03); color: #475569; display: inline-block; margin: 2px 2px; }
+.card-desc { font-size: 13px; line-height: 1.7; color: #475569; margin-bottom: 14px; }
+.card-footer { display: flex; align-items: center; gap: 12px; padding-top: 14px; border-top: 1px solid rgba(0,0,0,0.04); }
+.card-link { margin-left: auto; font-size: 12px; font-weight: 600; color: #64748B; text-decoration: none; padding: 6px 16px; border-radius: 8px; border: 1px solid rgba(0,0,0,0.06); transition: all 0.2s; }
+.card-link:hover { color: #1D4ED8; border-color: rgba(29,78,216,0.12); background: rgba(29,78,216,0.04); }
+.grid-auto { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 18px; }
+
+.price-free { background: rgba(16,185,129,0.08); color: #059669; }
+.price-paid { background: rgba(245,158,11,0.08); color: #D97706; }
+.price-trial { background: rgba(59,130,246,0.08); color: #2563EB; }
+.skill-pill { font-size: 10px; padding: 2px 7px; border-radius: 4px; background: rgba(0,0,0,0.02); color: #64748B; border: 1px solid rgba(0,0,0,0.04); display: inline-block; margin: 1px; }
+
+.rec-section { margin: 48px 0; }
+.rec-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 14px; }
+.rec-item { display: flex; align-items: center; gap: 12px; padding: 14px 18px; border-radius: 10px; background: #fff; border: 1px solid rgba(0,0,0,0.04); transition: all 0.2s; text-decoration: none; }
+.rec-item:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.04); border-color: rgba(29,78,216,0.08); }
+.rec-emoji { font-size: 20px; flex-shrink: 0; }
+.rec-text { font-size: 12px; color: #475569; }
+.rec-text strong { color: #0F172A; font-weight: 600; }
+
+.method-cta { background: linear-gradient(135deg, rgba(29,78,216,0.03), rgba(124,58,237,0.03)); border-radius: 14px; padding: 28px 32px; border: 1px solid rgba(29,78,216,0.06); text-align: center; }
+.method-cta-title { font-size: 20px; font-weight: 800; color: #0F172A; margin-bottom: 6px; }
+.method-cta-desc { font-size: 14px; line-height: 1.7; color: #475569; margin-bottom: 16px; }
+.method-cta-tip { display: inline-block; font-size: 13px; color: #1D4ED8; font-weight: 500; padding: 8px 18px; border-radius: 100px; background: rgba(29,78,216,0.04); border: 1px solid rgba(29,78,216,0.06); }
+
+footer { padding: 40px 0; border-top: 1px solid rgba(0,0,0,0.04); text-align: center; }
+footer p { font-size: 13px; color: #64748B; }
+
+/* TOOLTIP */
+.tp {
+  position: fixed; z-index: 999999; pointer-events: none;
+  background: #fff; border-radius: 10px; padding: 8px 14px; max-width: 300px;
+  font-size: 13px; line-height: 1.6; color: #0F172A;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1); border: 1px solid rgba(0,0,0,0.06);
+  border-left: 3px solid #1D4ED8;
+  opacity: 0; transition: opacity 0.2s; font-family: 'Inter', sans-serif;
+}
+.tp.show { opacity: 1; }
+
+@media (max-width: 1024px) {
+  .hero-layout { grid-template-columns: 1fr; gap: 40px; }
+  .mn-steps { grid-template-columns: repeat(2, 1fr); }
+  .grid-auto { grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
+}
+@media (max-width: 768px) {
+  .container { padding: 0 20px; }
+  .section { padding: 48px 0; }
+  .hero { padding: 48px 0 40px; }
+  .section-title { font-size: 26px; }
+  .section-desc { font-size: 14px; }
+  .mn-steps { grid-template-columns: 1fr; }
+  .grid-auto { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="container">
+    <a href="#" class="nav-logo">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#1D4ED8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+      Shadow
+    </a>
+    <div class="nav-links">
+      <a class="nav-link active" href="#landing">Home</a>
+      <a class="nav-link" href="#method">Method</a>
+      <a class="nav-link" href="#resources">Resources</a>
+      <a class="nav-link" href="app.html" style="color:#1D4ED8;background:rgba(29,78,216,0.06);font-weight:600;">Launch App →</a>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+
+  <section class="hero" id="landing">
+    <div class="hero-layout">
+      <div>
+        <div class="badge" style="margin-bottom:16px;" data-zh="AI驱动 · 尚雯婕方法"><span class="badge-dot"></span> AI-Powered · Shang Wenjie Method</div>
+        <h1 data-zh="使用尚雯婕方法学习英语">Learn English with the <span class="grad" data-zh="尚雯婕方法">Shang Wenjie Method</span></h1>
+        <p class="hero-sub" data-zh="10个精选材料·4个训练步骤·10个月让你的英语从犹豫到流利">10 curated materials · 4 training steps · 10 months to transform your English from hesitant to fluent.</p>
+        <div class="hero-actions">
+          <a href="app.html" class="btn btn-primary btn-lg">Start Learning →</a>
+          <a href="#resources" class="btn btn-secondary btn-lg">Browse Resources</a>
+        </div>
+      </div>
+      <div class="hero-visual">
+        <div class="jv-title" data-zh="你的学习之旅">Your Learning Journey</div>
+        <div class="jv-step active"><div class="jv-num">1</div><div><div class="jv-label" data-zh="水平测试">Assessment</div><div class="jv-desc" data-zh="找到你的起点水平">Find your starting level</div></div></div>
+        <div class="jv-arrow">↓</div>
+        <div class="jv-step"><div class="jv-num">2</div><div><div class="jv-label" data-zh="盲听听写">Blind Dictation</div><div class="jv-desc" data-zh="不看书稿听写全文">Listen & transcribe without script</div></div></div>
+        <div class="jv-arrow">↓</div>
+        <div class="jv-step"><div class="jv-num">3</div><div><div class="jv-label" data-zh="影子跟读">Shadowing</div><div class="jv-desc" data-zh="模仿语调和节奏">Mimic intonation & rhythm</div></div></div>
+        <div class="jv-arrow">↓</div>
+        <div class="jv-step"><div class="jv-num">4</div><div><div class="jv-label" data-zh="语速匹配">Speed Match</div><div class="jv-desc" data-zh="以原速背诵">Recite at native speed</div></div></div>
+        <div class="jv-arrow">↓</div>
+        <div class="jv-step"><div class="jv-num">5</div><div><div class="jv-label" data-zh="流利表达">Fluency</div><div class="jv-desc" data-zh="语言如本能般流畅">Words flow like instinct</div></div></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section" id="method">
+    <div class="section-header">
+      <div class="section-label" data-zh="尚雯婕方法">尚雯婕 Method</div>
+      <div class="section-title" data-zh="把英语训练成本能">Train English into reflex</div>
+      <div class="section-desc" data-zh="不是理解英语，而是通过高强度听写和跟读让它成为本能。">Not understanding English — making it instinctive through intense dictation & shadowing.</div>
+    </div>
+
+    <div class="mn-block">
+      <div class="mn-content">
+        <div class="mn-badge" data-zh="核心理念">Core Philosophy</div>
+        <div class="mn-title" data-zh="语言不是学来的，是练成本能的">Language is not learned — it's trained into reflex</div>
+        <div class="mn-desc" data-zh="通过高强度听写、跟读和背诵，你建立语言神经通路。不是理解英语，而是让它成为本能。">Through high-intensity dictation, shadowing, and recitation, you build neural pathways for language. Not "understanding" English, but making it instinctive.</div>
+      </div>
+      <div class="mn-stats">
+        <div class="mn-stat"><div class="mn-stat-num">10</div><div class="mn-stat-label" data-zh="篇目">Pieces</div></div>
+        <div class="mn-stat"><div class="mn-stat-num">10</div><div class="mn-stat-label" data-zh="月份">Months</div></div>
+        <div class="mn-stat"><div class="mn-stat-num">4</div><div class="mn-stat-label" data-zh="步骤">Steps</div></div>
+      </div>
+    </div>
+
+    <div class="mn-steps">
+      <div class="mn-step"><div class="ms-num">01</div><div class="ms-ico">🎧</div><div class="ms-tit" data-zh="盲听听写">Blind Dictation</div><div class="ms-desc" data-zh="反复听不看书稿，写下你听到的全部。逐句听写，留空，重复直到无法提取更多。">Listen repeatedly without the script and transcribe everything you hear. Sentence by sentence, leave blanks, repeat until you can extract no more.</div></div>
+      <div class="mn-step"><div class="ms-num">02</div><div class="ms-ico">📖</div><div class="ms-tit" data-zh="验证与分析">Verify & Analyze</div><div class="ms-desc" data-zh="对照原文对比，分析每个盲点。红笔纠错，学习连读、词汇和语速模式。">Compare with the transcript and analyze every gap. Correct in red, study linking, vocab, and speed patterns.</div></div>
+      <div class="mn-step"><div class="ms-num">03</div><div class="ms-ico">🗣️</div><div class="ms-tit" data-zh="跟读与录音">Shadow & Record</div><div class="ms-desc" data-zh="重复50-100次直到脱口而出。模仿语调，脱离文本跟读，录音对比。">Repeat 50-100 times until words flow effortlessly. Mimic intonation, shadow without text, record and compare.</div></div>
+      <div class="mn-step"><div class="ms-num">04</div><div class="ms-ico">⚡</div><div class="ms-tit" data-zh="语速匹配">Speed Match</div><div class="ms-desc" data-zh="凭记忆以原速背诵。精确匹配发音、语调和停顿。文字脱口而出。">Recite from memory at native speed. Match pronunciation, tone, and pauses exactly. Words flow off the tongue.</div></div>
+    </div>
+
+    <div style="margin-bottom:28px;">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px;"><span style="font-size:18px;">📅</span><span style="font-size:15px;font-weight:700;color:#0F172A;" data-zh="10个月路线图">10-Month Roadmap</span></div>
+      <div class="tl">
+        <div class="tl-item"><div class="tl-month">M1-2</div><div class="tl-content"><div class="tl-content-title" data-zh="基础·精准听力">Foundation · Precision Listening</div><div class="tl-content-desc" data-zh="3-5分钟短材料（TED-Ed, VOA慢速）。聚焦听写准确率>80%。每天1-2小时。">3-5 min short materials (TED-Ed, VOA Slow). Focus on dictation accuracy > 80%. 1-2 hrs daily.</div></div><div class="tl-tag" data-zh="慢速">Slow</div></div>
+        <div class="tl-item"><div class="tl-month">M3-4</div><div class="tl-content"><div class="tl-content-title" data-zh="语调·声音塑造">Intonation · Voice Shaping</div><div class="tl-content-desc" data-zh="5-8分钟标准速度材料（TED, BBC）。重心从听写转向跟读质量。">5-8 min standard-speed materials (TED, BBC). Shift focus from dictation to shadowing quality.</div></div><div class="tl-tag" data-zh="标准">Standard</div></div>
+        <div class="tl-item"><div class="tl-month">M5-7</div><div class="tl-content"><div class="tl-content-title" data-zh="完整长度·20分钟">Full Length · 20 min</div><div class="tl-content-desc" data-zh="完整的20分钟材料。完成4步循环。每篇约1个月。">Full 20-min material. Complete 4-step cycle. ~1 month per piece.</div></div><div class="tl-tag" data-zh="完整">Full</div></div>
+        <div class="tl-item"><div class="tl-month">M8-10</div><div class="tl-content"><div class="tl-content-title" data-zh="多样性·真实世界">Diversity · Real World</div><div class="tl-content-desc" data-zh="不同口音和领域。完成全部10篇，流利理解与表达。">Varied accents & domains. Complete 10 pieces total — fluent comprehension & expression.</div></div><div class="tl-tag" data-zh="多样">Varied</div></div>
+      </div>
+    </div>
+
+    <div class="method-cta">
+      <div class="method-cta-title" data-zh="准备好开始你的旅程了吗？">Ready to start your journey?</div>
+      <div class="method-cta-desc" data-zh="选一个TED演讲，今天开始你的第一次听写。10个月后你会感谢今天开始的自己。">Pick a TED talk and begin your first dictation today. 10 months from now, you'll thank yourself for starting.</div>
+      <div class="method-cta-tip" data-zh="第一周不要追求完美。先建立每天听写的习惯。">Don't chase perfection in week one. Build the daily dictation habit first.</div>
+    </div>
+  </div>
+
+  <div class="section" id="resources">
+    <div class="section-header">
+      <div class="section-label" data-zh="资源">Resources</div>
+      <div class="section-title" data-zh="精选学习工具">Curated learning tools</div>
+      <div class="section-desc" data-zh="30个精选资源，覆盖6个类别，按实际效果排名">30 hand-picked resources across 6 categories, ranked by real-world impact</div>
+    </div>
+
+    <div style="margin-bottom:36px;">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;"><div style="width:36px;height:36px;border-radius:8px;background:rgba(29,78,216,0.06);display:flex;align-items:center;justify-content:center;font-size:16px;">📚</div><div><div style="font-size:16px;font-weight:700;color:#0F172A;" data-zh="综合平台">Comprehensive Platforms</div><div style="font-size:11px;color:#94A3B8;" data-zh="一站式学习系统">All-in-one learning systems</div></div></div>
+      <div class="grid-auto">
+        <div class="card"><div class="card-top"><div class="card-emoji">🦉</div><span class="card-rank cr-1">#1</span></div><div class="card-name">Duolingo</div><div style="margin:6px 0;"><span class="card-tag">Gamified</span><span class="card-tag">A1-B2</span><span class="card-tag">Free</span></div><div class="card-desc">Global #1 free English app. Gamified daily habit, structured progression. New AI conversation feature.</div><div class="card-footer"><span style="font-size:11px;color:#94A3B8;">★ 9.5</span><a class="card-link" href="https://www.duolingo.com" target="_blank">Visit →</a></div></div>
+        <div class="card"><div class="card-top"><div class="card-emoji">🔤</div><span class="card-rank cr-2">#2</span></div><div class="card-name">Babbel</div><div style="margin:6px 0;"><span class="card-tag">Grammar</span><span class="card-tag">Structured</span></div><div class="card-desc">Best grammar explanations. 10-15 min lessons, A1-B2, native audio.</div><div class="card-footer"><span style="font-size:11px;color:#94A3B8;">★ 9.0</span><a class="card-link" href="https://www.babbel.com" target="_blank">Visit →</a></div></div>
+        <div class="card"><div class="card-top"><div class="card-emoji">🌍</div><span class="card-rank cr-3">#3</span></div><div class="card-name">Rosetta Stone</div><div style="margin:6px 0;"><span class="card-tag">Immersive</span><span class="card-tag">Speech AI</span></div><div class="card-desc">Pioneer of immersive learning. English-only with TruAccent speech recognition.</div><div class="card-footer"><span style="font-size:11px;color:#94A3B8;">★ 8.8</span><a class="card-link" href="https://www.rosettastone.com" target="_blank">Visit →</a></div></div>
+        <div class="card"><div class="card-top"><div class="card-emoji">👥</div><span class="card-rank cr-">#4</span></div><div class="card-name">Busuu</div><div style="margin:6px 0;"><span class="card-tag">Community</span><span class="card-tag">CEFR</span></div><div class="card-desc">655+ lessons A1-C1. Native speaker corrections + AI speaking.</div><div class="card-footer"><span style="font-size:11px;color:#94A3B8;">★ 8.5</span><a class="card-link" href="https://www.busuu.com" target="_blank">Visit →</a></div></div>
+        <div class="card"><div class="card-top"><div class="card-emoji">🏫</div><span class="card-rank cr-">#5</span></div><div class="card-name">Lingoda</div><div style="margin:6px 0;"><span class="card-tag">Live classes</span></div><div class="card-desc">Live online classes with professional teachers. Sprint cashback.</div><div class="card-footer"><span style="font-size:11px;color:#94A3B8;">★ 8.3</span><a class="card-link" href="https://www.lingoda.com" target="_blank">Visit →</a></div></div>
+        <div class="card"><div class="card-top"><div class="card-emoji">📖</div><span class="card-rank cr-">#6</span></div><div class="card-name">Fluenz</div><div style="margin:6px 0;"><span class="card-tag">Video</span></div><div class="card-desc">Instructor-led video lessons with clear logical progression.</div><div class="card-footer"><span style="font-size:11px;color:#94A3B8;">★ 8.0</span><a class="card-link" href="https://www.fluenz.com" target="_blank">Visit →</a></div></div>
+      </div>
+    </div>
+
+    <div style="margin-bottom:36px;">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;"><div style="width:36px;height:36px;border-radius:8px;background:rgba(124,58,237,0.06);display:flex;align-items:center;justify-content:center;font-size:16px;">🗣️</div><div><div style="font-size:16px;font-weight:700;color:#0F172A;">Speaking & Pronunciation</div><div style="font-size:11px;color:#94A3B8;">Speech accuracy and fluency</div></div></div>
+      <div class="grid-auto">
+        <div class="card"><div class="card-top"><div class="card-emoji">🎯</div><span class="card-rank cr-1">#1</span></div><div class="card-name">ELSA Speak</div><div style="margin:6px 0;"><span class="card-tag">Phoneme AI</span><span class="card-tag">Exam prep</span></div><div class="card-desc">AI pinpoints which phonemes you mispronounce. TOEFL/IELTS prep included.</div><div class="card-footer"><span style="font-size:11px;color:#94A3B8;">★ 9.3</span><a class="card-link" href="https://www.elsaspeak.com" target="_blank">Visit →</a></div></div>
+        <div class="card"><div class="card-top"><div class="card-emoji">💬</div><span class="card-rank cr-2">#2</span></div><div class="card-name">iTalki</div><div style="margin:6px 0;"><span class="card-tag">1-on-1</span><span class="card-tag">Tutors</span></div><div class="card-desc">World's largest tutoring marketplace. Professional & community teachers.</div><div class="card-footer"><span style="font-size:11px;color:#94A3B8;">★ 9.0</span><a class="card-link" href="https://www.italki.com" target="_blank">Visit →</a></div></div>
+        <div class="card"><div class="card-top"><div class="card-emoji">🎥</div><span class="card-rank cr-3">#3</span></div><div class="card-name">Cambly</div><div style="margin:6px 0;"><span class="card-tag">On-demand</span><span class="card-tag">Native</span></div><div class="card-desc">Instant video chat with native tutors. No scheduling needed.</div><div class="card-footer"><span style="font-size:11px;color:#94A3B8;">★ 8.7</span><a class="card-link" href="https://www.cambly.com" target="_blank">Visit →</a></div></div>
+        <div class="card"><div class="card-top"><div class="card-emoji">📋</div><span class="card-rank cr-">#4</span></div><div class="card-name">Preply</div><div style="margin:6px 0;"><span class="card-tag">Marketplace</span></div><div class="card-desc">Personalized tutor matching with AI recommendations.</div><div class="card-footer"><span style="font-size:11px;color:#94A3B8;">★ 8.4</span><a class="card-link" href="https://www.preply.com" target="_blank">Visit →</a></div></div>
+        <div class="card"><div class="card-top"><div class="card-emoji">🎧</div><span class="card-rank cr-">#5</span></div><div class="card-name">Pimsleur</div><div style="margin:6px 0;"><span class="card-tag">Audio</span><span class="card-tag">Commute</span></div><div class="card-desc">30-min audio lessons with spaced recall. Excellent American English.</div><div class="card-footer"><span style="font-size:11px;color:#94A3B8;">★ 8.2</span><a class="card-link" href="https://www.pimsleur.com" target="_blank">Visit →</a></div></div>
+        <div class="card"><div class="card-top"><div class="card-emoji">🎤</div><span class="card-rank cr-">#6</span></div><div class="card-name">Speak</div><div style="margin:6px 0;"><span class="card-tag">AI convo</span><span class="card-tag">Mobile</span></div><div class="card-desc">Immersive AI speaking with ultra-low latency. Best for daily practice.</div><div class="card-footer"><span style="font-size:11px;color:#94A3B8;">★ 8.1</span><a class="card-link" href="https://www.speak.com" target="_blank">Visit →</a></div></div>
+      </div>
+    </div>
+
+    <div style="margin-bottom:36px;">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;"><div style="width:36px;height:36px;border-radius:8px;background:rgba(245,158,11,0.06);display:flex;align-items:center;justify-content:center;font-size:16px;">📝</div><div><div style="font-size:16px;font-weight:700;color:#0F172A;">Vocabulary & Grammar</div><div style="font-size:11px;color:#94A3B8;">Build your word bank</div></div></div>
+      <div class="grid-auto">
+        <div class="card"><div class="card-top"><div class="card-emoji">🗂️</div><span class="card-rank cr-1">#1</span></div><div class="card-name">Anki</div><div style="margin:6px 0;"><span class="card-tag">SRS</span><span class="card-tag">Free</span></div><div class="card-desc">Most efficient vocabulary tool. 20 years of proven Spaced Repetition.</div><div class="card-footer"><span style="font-size:11px;color:#94A3B8;">★ 9.2</span><a class="card-link" href="https://apps.ankiweb.net" target="_blank">Visit →</a></div></div>
+        <div class="card"><div class="card-top"><div class="card-emoji">🌱</div><span class="card-rank cr-2">#2</span></div><div class="card-name">Memrise</div><div style="margin:6px 0;"><span class="card-tag">Native video</span><span class="card-tag">SRS</span></div><div class="card-desc">Short videos of locals speaking + SRS. More engaging than flashcards.</div><div class="card-footer"><span style="font-size:11px;color:#94A3B8;">★ 8.6</span><a class="card-link" href="https://www.memrise.com" target="_blank">Visit →</a></div></div>
+        <div class="card"><div class="card-top"><div class="card-emoji">✍️</div><span class="card-rank cr-3">#3</span></div><div class="card-name">Grammarly</div><div style="margin:6px 0;"><span class="card-tag">AI writing</span></div><div class="card-desc">AI-powered writing companion. Learn by writing — emails, reports.</div><div class="card-footer"><span style="font-size:11px;color:#94A3B8;">★ 8.8</span><a class="card-link" href="https://www.grammarly.com" target="_blank">Visit →</a></div></div>
+        <div class="card"><div class="card-top"><div class="card-emoji">📇</div><span class="card-rank cr-">#4</span></div><div class="card-name">Quizlet</div><div style="margin:6px 0;"><span class="card-tag">Flashcards</span><span class="card-tag">Free</span></div><div class="card-desc">Classic flashcard tool. Millions of shared community decks.</div><div class="card-footer"><span style="font-size:11px;color:#94A3B8;">★ 8.0</span><a class="card-link" href="https://quizlet.com" target="_blank">Visit →</a></div></div>
+        <div class="card"><div class="card-top"><div class="card-emoji">🦌</div><span class="card-rank cr-">#5</span></div><div class="card-name">LingoDeer</div><div style="margin:6px 0;"><span class="card-tag">Grammar</span><span class="card-tag">Details</span></div><div class="card-desc">Exceptionally detailed grammar explanations. Builds from fundamentals.</div><div class="card-footer"><span style="font-size:11px;color:#94A3B8;">★ 7.8</span><a class="card-link" href="https://www.lingodeer.com" target="_blank">Visit →</a></div></div>
+      </div>
+    </div>
+
+    <div style="margin-bottom:36px;">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;"><div style="width:36px;height:36px;border-radius:8px;background:rgba(16,185,129,0.06);display:flex;align-items:center;justify-content:center;font-size:16px;">🤖</div><div><div style="font-size:16px;font-weight:700;color:#0F172A;">AI Speaking</div><div style="font-size:11px;color:#94A3B8;">2026's AI conversation partners</div></div></div>
+      <div class="grid-auto">
+        <div class="card"><div class="card-top"><div class="card-emoji">⭐</div><span class="card-rank cr-1">#1</span></div><div class="card-name">SpeakShark</div><div style="margin:6px 0;"><span class="card-tag">4 accents</span><span class="card-tag">Free 3/day</span></div><div class="card-desc">Four AI teachers (US/UK/AU/CA), open conversation, phoneme feedback.</div><div class="card-footer"><span style="font-size:11px;color:#94A3B8;">★ 9.0</span><a class="card-link" href="https://speakshark.com" target="_blank">Visit →</a></div></div>
+        <div class="card"><div class="card-top"><div class="card-emoji">💭</div><span class="card-rank cr-2">#2</span></div><div class="card-name">TalkPal</div><div style="margin:6px 0;"><span class="card-tag">100+ scen.</span><span class="card-tag">Adaptive</span></div><div class="card-desc">Immersive AI conversation with 100+ real-world scenarios.</div><div class="card-footer"><span style="font-size:11px;color:#94A3B8;">★ 8.5</span><a class="card-link" href="https://www.talkpal.ai" target="_blank">Visit →</a></div></div>
+        <div class="card"><div class="card-top"><div class="card-emoji">🎬</div><span class="card-rank cr-3">#3</span></div><div class="card-name">Jolii AI</div><div style="margin:6px 0;"><span class="card-tag">YouTube</span><span class="card-tag">Immersion</span></div><div class="card-desc">Learn through YouTube & Netflix. AI extracts vocabulary from videos.</div><div class="card-footer"><span style="font-size:11px;color:#94A3B8;">★ 8.4</span><a class="card-link" href="https://www.jolii.ai" target="_blank">Visit →</a></div></div>
+        <div class="card"><div class="card-top"><div class="card-emoji">💬</div><span class="card-rank cr-">#4</span></div><div class="card-name">Fluently</div><div style="margin:6px 0;"><span class="card-tag">Natural chat</span></div><div class="card-desc">ChatGPT-like AI for speaking practice. Real-time corrections.</div><div class="card-footer"><span style="font-size:11px;color:#94A3B8;">★ 8.0</span><a class="card-link" href="https://www.fluently.app" target="_blank">Visit →</a></div></div>
+        <div class="card"><div class="card-top"><div class="card-emoji">🎧</div><span class="card-rank cr-">#5</span></div><div class="card-name">Listen & Learn</div><div style="margin:6px 0;"><span class="card-tag">Business</span></div><div class="card-desc">Immersive platform for professionals. Real-world roleplay + AI.</div><div class="card-footer"><span style="font-size:11px;color:#94A3B8;">★ 8.2</span><a class="card-link" href="https://www.wynai.pro" target="_blank">Visit →</a></div></div>
+      </div>
+    </div>
+
+    <div style="margin-bottom:36px;">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;"><div style="width:36px;height:36px;border-radius:8px;background:rgba(56,189,248,0.06);display:flex;align-items:center;justify-content:center;font-size:16px;">📻</div><div><div style="font-size:16px;font-weight:700;color:#0F172A;">Listening & Reading</div><div style="font-size:11px;color:#94A3B8;">Immersion through content</div></div></div>
+      <div class="grid-auto">
+        <div class="card"><div class="card-top"><div class="card-emoji">🏛️</div><span class="card-rank cr-1">#1</span></div><div class="card-name">British Council</div><div style="margin:6px 0;"><span class="card-tag">10k+ activ.</span><span class="card-tag">Free</span></div><div class="card-desc">World's most authoritative free resource. Graded reading & listening.</div><div class="card-footer"><span style="font-size:11px;color:#94A3B8;">★ 9.0</span><a class="card-link" href="https://learnenglish.britishcouncil.org" target="_blank">Visit →</a></div></div>
+        <div class="card"><div class="card-top"><div class="card-emoji">📖</div><span class="card-rank cr-2">#2</span></div><div class="card-name">LingQ</div><div style="margin:6px 0;"><span class="card-tag">Import</span><span class="card-tag">SRS</span></div><div class="card-desc">Import articles, blogs, YouTube. AI-assisted lookup + SRS review.</div><div class="card-footer"><span style="font-size:11px;color:#94A3B8;">★ 8.6</span><a class="card-link" href="https://www.lingq.com" target="_blank">Visit →</a></div></div>
+        <div class="card"><div class="card-top"><div class="card-emoji">📻</div><span class="card-rank cr-3">#3</span></div><div class="card-name">BBC Learning</div><div style="margin:6px 0;"><span class="card-tag">British</span><span class="card-tag">Free</span></div><div class="card-desc">6 Minute English, News Review. Premium British content.</div><div class="card-footer"><span style="font-size:11px;color:#94A3B8;">★ 8.8</span><a class="card-link" href="https://www.bbc.co.uk/learningenglish" target="_blank">Visit →</a></div></div>
+        <div class="card"><div class="card-top"><div class="card-emoji">🇺🇸</div><span class="card-rank cr-">#4</span></div><div class="card-name">VOA Learning</div><div style="margin:6px 0;"><span class="card-tag">American</span><span class="card-tag">Slow</span></div><div class="card-desc">Slowed-down American English news with full transcripts.</div><div class="card-footer"><span style="font-size:11px;color:#94A3B8;">★ 8.3</span><a class="card-link" href="https://learningenglish.voanews.com" target="_blank">Visit →</a></div></div>
+        <div class="card"><div class="card-top"><div class="card-emoji">⚡</div><span class="card-rank cr-">#5</span></div><div class="card-name">ESL Fast</div><div style="margin:6px 0;"><span class="card-tag">2,500+</span><span class="card-tag">Free</span></div><div class="card-desc">2,500+ conversations + 3,000+ stories with audio.</div><div class="card-footer"><span style="font-size:11px;color:#94A3B8;">★ 8.0</span><a class="card-link" href="https://www.eslfast.com" target="_blank">Visit →</a></div></div>
+      </div>
+    </div>
+
+    <div style="margin-bottom:36px;">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;"><div style="width:36px;height:36px;border-radius:8px;background:rgba(239,68,68,0.06);display:flex;align-items:center;justify-content:center;font-size:16px;">💎</div><div><div style="font-size:16px;font-weight:700;color:#0F172A;">Free Hidden Gems</div><div style="font-size:11px;color:#94A3B8;">100% free, no sign-up required</div></div></div>
+      <div class="grid-auto">
+        <div class="card"><div class="card-top"><div class="card-emoji">🎧</div><span class="card-rank cr-1">#1</span></div><div class="card-name">Lexinglo</div><div style="margin:6px 0;"><span class="card-tag">100% Free</span><span class="card-tag">No sign-up</span></div><div class="card-desc">1,745+ audio/video lessons, 836+ interactive exercises. All CEFR levels.</div><div class="card-footer"><span style="font-size:11px;color:#94A3B8;">★ 9.0</span><a class="card-link" href="https://lexinglo.com" target="_blank">Visit →</a></div></div>
+        <div class="card"><div class="card-top"><div class="card-emoji">🌐</div><span class="card-rank cr-2">#2</span></div><div class="card-name">EnglishClub</div><div style="margin:6px 0;"><span class="card-tag">Since 1997</span><span class="card-tag">Free</span></div><div class="card-desc">Veteran free resource since 1997. All skills covered.</div><div class="card-footer"><span style="font-size:11px;color:#94A3B8;">★ 8.6</span><a class="card-link" href="https://www.englishclub.com" target="_blank">Visit →</a></div></div>
+        <div class="card"><div class="card-top"><div class="card-emoji">📅</div><span class="card-rank cr-3">#3</span></div><div class="card-name">Free Daily English</div><div style="margin:6px 0;"><span class="card-tag">Daily</span><span class="card-tag">A1-B2</span></div><div class="card-desc">10 min/day: read a story, take a quiz, practice speaking.</div><div class="card-footer"><span style="font-size:11px;color:#94A3B8;">★ 8.2</span><a class="card-link" href="https://www.freedailyenglish.com" target="_blank">Visit →</a></div></div>
+        <div class="card"><div class="card-top"><div class="card-emoji">✈️</div><span class="card-rank cr-">#4</span></div><div class="card-name">Passport to English</div><div style="margin:6px 0;"><span class="card-tag">Course</span><span class="card-tag">3 levels</span></div><div class="card-desc">Complete free curriculum from zero. Beginning → Advanced.</div><div class="card-footer"><span style="font-size:11px;color:#94A3B8;">★ 7.8</span><a class="card-link" href="https://www.passporttoenglish.com" target="_blank">Visit →</a></div></div>
+        <div class="card"><div class="card-top"><div class="card-emoji">🎯</div><span class="card-rank cr-">#5</span></div><div class="card-name">Loecsen</div><div style="margin:6px 0;"><span class="card-tag">A1 beginner</span><span class="card-tag">Scenarios</span></div><div class="card-desc">Beginner A1 course with 17 practical scenarios. 15 min/day.</div><div class="card-footer"><span style="font-size:11px;color:#94A3B8;">★ 7.6</span><a class="card-link" href="https://www.loecsen.com" target="_blank">Visit →</a></div></div>
+      </div>
+    </div>
+
+    <div class="rec-section">
+      <div style="font-size:16px;font-weight:700;color:#0F172A;margin-bottom:18px;">✦ Recommended Stacks</div>
+      <div class="rec-grid">
+        <div class="rec-item"><span class="rec-emoji">🌱</span><span class="rec-text">Beginner → <strong>Duolingo</strong> + <strong>Lexinglo</strong></span></div>
+        <div class="rec-item"><span class="rec-emoji">🗣️</span><span class="rec-text">Speaking → <strong>SpeakShark</strong> + <strong>ELSA</strong></span></div>
+        <div class="rec-item"><span class="rec-emoji">🚀</span><span class="rec-text">Advanced → <strong>LingQ</strong> + <strong>iTalki</strong></span></div>
+        <div class="rec-item"><span class="rec-emoji">🎓</span><span class="rec-text">Exam → <strong>British Council</strong> + <strong>Anki</strong></span></div>
+        <div class="rec-item"><span class="rec-emoji">🎧</span><span class="rec-text">Commute → <strong>Pimsleur</strong> + <strong>BBC</strong></span></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  <div class="container">
+    <p>Shadow · AI-Powered English Learning · Built on the Shang Wenjie Method · Updated June 2026</p>
+  </div>
+</footer>
+
+<script>
+(function() {
+  /* === TRANSLATION TOOLTIP === */
+  var dict = {
+    "Home":"首页","Method":"方法","Resources":"资源","Launch App":"启动应用",
+    "AI-Powered · Shang Wenjie Method":"AI驱动 · 尚雯婕方法",
+    "Learn English with the":"学习英语，通过","Shang Wenjie Method":"尚雯婕方法",
+    "10 curated materials · 4 training steps · 10 months to transform your English from hesitant to fluent.":"10个精选材料 · 4个训练步骤 · 10个月让你的英语从犹豫到流利",
+    "Start Learning":"开始学习","Browse Resources":"浏览资源",
+    "Your Learning Journey":"你的学习之旅",
+    "Assessment":"水平测试","Find your starting level":"找到你的起点",
+    "Blind Dictation":"盲听听写","Listen & transcribe without script":"不看书稿，听写全文",
+    "Shadowing":"影子跟读","Mimic intonation & rhythm":"模仿语调和节奏",
+    "Speed Match":"语速匹配","Recite at native speed":"以原速背诵",
+    "Fluency":"流利表达","Words flow like instinct":"语言如本能般流畅",
+    "Train English into reflex":"把英语训练成本能",
+    "Not understanding English — making it instinctive through intense dictation & shadowing.":"不是"理解"英语 — 而是通过高强度听写和跟读让它成为本能。",
+    "Core Philosophy":"核心理念",
+    "Language is not learned — it's trained into reflex":"语言不是学来的 — 是练成本能的",
+    "Through high-intensity dictation, shadowing, and recitation, you build neural pathways for language. Not \"understanding\" English, but making it instinctive.":"通过高强度听写、跟读和背诵，你建立语言神经通路。不是"理解"英语，而是让它成为本能。",
+    "Pieces":"篇目","Months":"月份","Steps":"步骤",
+    "Verify & Analyze":"验证与分析",
+    "Compare with the transcript and analyze every gap. Correct in red, study linking, vocab, and speed patterns.":"对照原文对比，分析每个盲点。用红笔纠错，学习连读、词汇和语速模式。",
+    "Shadow & Record":"跟读与录音",
+    "Repeat 50-100 times until words flow effortlessly. Mimic intonation, shadow without text, record and compare.":"重复50-100次直到脱口而出。模仿语调，脱离文本跟读，录音对比。",
+    "Listen repeatedly without the script and transcribe everything you hear. Sentence by sentence, leave blanks, repeat until you can extract no more.":"反复听，不要看书稿，写下你听到的全部。逐句听写，留空，重复直到无法提取更多。",
+    "Recite from memory at native speed. Match pronunciation, tone, and pauses exactly. Words flow off the tongue.":"凭记忆以原速背诵。精确匹配发音、语调和停顿。文字脱口而出。",
+    "10-Month Roadmap":"10个月路线图",
+    "Foundation · Precision Listening":"基础 · 精准听力",
+    "3-5 min short materials (TED-Ed, VOA Slow). Focus on dictation accuracy > 80%. 1-2 hrs daily.":"3-5分钟短材料。聚焦听写准确率>80%。每天1-2小时。",
+    "Intonation · Voice Shaping":"语调 · 声音塑造",
+    "5-8 min standard-speed materials (TED, BBC). Shift focus from dictation to shadowing quality.":"5-8分钟标准速度材料。重心从听写转向跟读质量。",
+    "Full Length · 20 min":"完整长度 · 20分钟",
+    "Full 20-min material. Complete 4-step cycle. ~1 month per piece.":"完整的20分钟材料。完成4步循环。每篇约1个月。",
+    "Diversity · Real World":"多样性 · 真实世界",
+    "Varied accents & domains. Complete 10 pieces total — fluent comprehension & expression.":"不同口音和领域。完成全部10篇 — 流利理解与表达。",
+    "Slow":"慢速","Standard":"标准","Full":"完整","Varied":"多样",
+    "Ready to start your journey?":"准备好开始你的旅程了吗？",
+    "Pick a TED talk and begin your first dictation today. 10 months from now, you'll thank yourself for starting.":"选一个TED演讲，今天开始你的第一次听写。10个月后，你会感谢今天开始的自己。",
+    "Don't chase perfection in week one. Build the daily dictation habit first.":"第一周不要追求完美。先建立每天听写的习惯。",
+    "Curated learning tools":"精选学习工具",
+    "30 hand-picked resources across 6 categories, ranked by real-world impact":"30个精选资源，覆盖6个类别，按实际效果排名",
+    "Comprehensive Platforms":"综合平台","All-in-one learning systems":"一站式学习系统",
+    "Speaking & Pronunciation":"口语与发音","Speech accuracy and fluency":"发音准确度和流利度",
+    "Vocabulary & Grammar":"词汇与语法","Build your word bank":"建立你的词库",
+    "AI Speaking":"AI口语","2026's AI conversation partners":"2026年的AI对话伙伴",
+    "Listening & Reading":"听力与阅读","Immersion through content":"通过内容沉浸",
+    "Free Hidden Gems":"免费隐藏宝藏","100% free, no sign-up required":"完全免费，无需注册",
+    "Duolingo":"多邻国","Babbel":"巴比贝尔","Rosetta Stone":"罗塞塔石碑",
+    "Busuu":"博树","Lingoda":"林戈达","Fluenz":"弗伦兹",
+    "ELSA Speak":"ELSA口语","iTalki":"爱拓奇","Cambly":"坎布利",
+    "Preply":"普雷普利","Pimsleur":"皮姆斯勒","Speak":"口语说",
+    "Anki":"安琪","Memrise":"记忆rise","Grammarly":"语法检查",
+    "Quizlet":"问答集","LingoDeer":"语鹿",
+    "SpeakShark":"口语鲨鱼","TalkPal":"谈话伙伴","Jolii AI":"乔利AI",
+    "Fluently":"流利说","Listen & Learn":"听与学",
+    "British Council":"英国文化协会","LingQ":"灵Q","BBC Learning":"BBC学习",
+    "VOA Learning":"VOA学习","ESL Fast":"ESL速成",
+    "Lexinglo":"乐学英语","EnglishClub":"英语俱乐部","Free Daily English":"每日免费英语",
+    "Passport to English":"英语护照","Loecsen":"罗森",
+    "Recommended Stacks":"推荐组合",
+    "Beginner":"初学者","Speaking":"口语","Advanced":"进阶","Exam":"考试","Commute":"通勤",
+    "Global #1 free English app. Gamified daily habit, structured progression. New AI conversation feature.":"全球第一的免费英语应用。游戏化的每日习惯，结构化进阶。全新AI对话功能。",
+    "Best grammar explanations. 10-15 min lessons, A1-B2, native audio.":"最佳语法讲解。10-15分钟课程，A1-B2级别，母语者音频。",
+    "Pioneer of immersive learning. English-only with TruAccent speech recognition.":"沉浸式学习的先驱。全英文环境，TruAccent语音识别技术。",
+    "655+ lessons A1-C1. Native speaker corrections + AI speaking.":"655+课程A1-C1。母语者纠错+AI口语练习。",
+    "Live online classes with professional teachers. Sprint cashback.":"专业教师在线直播课程。冲刺班有返现奖励。",
+    "Instructor-led video lessons with clear logical progression.":"讲师引导的视频课程，逻辑清晰的进阶路径。",
+    "AI pinpoints which phonemes you mispronounce. TOEFL/IELTS prep included.":"AI精准定位你发错的音素。包含托福/雅思备考。",
+    "World's largest tutoring marketplace. Professional & community teachers.":"全球最大的家教市场。专业教师和社区教师。",
+    "Instant video chat with native tutors. No scheduling needed.":"与母语导师即时视频通话。无需预约。",
+    "Personalized tutor matching with AI recommendations.":"AI推荐个性化导师匹配。",
+    "30-min audio lessons with spaced recall. Excellent American English.":"30分钟音频课程，间隔回忆。地道美式英语。",
+    "Immersive AI speaking with ultra-low latency. Best for daily practice.":"超低延迟沉浸式AI口语。最适合日常练习。",
+    "Most efficient vocabulary tool. 20 years of proven Spaced Repetition.":"最高效的词汇工具。20年验证的间隔重复技术。",
+    "Short videos of locals speaking + SRS. More engaging than flashcards.":"当地人说话短视频+SRS。比闪卡更有趣。",
+    "AI-powered writing companion. Learn by writing — emails, reports.":"AI写作助手。通过写作学习 — 邮件、报告。",
+    "Classic flashcard tool. Millions of shared community decks.":"经典闪卡工具。数百万共享社区词库。",
+    "Exceptionally detailed grammar explanations. Builds from fundamentals.":"极其详细的语法讲解。从基础开始建构。",
+    "Four AI teachers (US/UK/AU/CA), open conversation, phoneme feedback.":"四位AI教师(美/英/澳/加)，自由对话，音素反馈。",
+    "Immersive AI conversation with 100+ real-world scenarios.":"沉浸式AI对话，100+真实场景。",
+    "Learn through YouTube & Netflix. AI extracts vocabulary from videos.":"通过YouTube和Netflix学习。AI从视频中提取词汇。",
+    "ChatGPT-like AI for speaking practice. Real-time corrections.":"类ChatGPT的AI口语练习。实时纠正。",
+    "Immersive platform for professionals. Real-world roleplay + AI.":"面向专业人士的沉浸式平台。真实场景角色扮演+AI。",
+    "World's most authoritative free resource. Graded reading & listening.":"全球最权威的免费资源。分级阅读和听力。",
+    "Import articles, blogs, YouTube. AI-assisted lookup + SRS review.":"导入文章、博客、YouTube。AI辅助查词+SRS复习。",
+    "6 Minute English, News Review. Premium British content.":"六分钟英语、新闻回顾。优质英式内容。",
+    "Slowed-down American English news with full transcripts.":"慢速美式英语新闻，附带完整文稿。",
+    "2,500+ conversations + 3,000+ stories with audio.":"2500+对话+3000+故事，均含音频。",
+    "1,745+ audio/video lessons, 836+ interactive exercises. All CEFR levels.":"1745+音视频课程，836+互动练习。覆盖所有CEFR级别。",
+    "Veteran free resource since 1997. All skills covered.":"自1997年的老牌免费资源。涵盖所有技能。",
+    "10 min/day: read a story, take a quiz, practice speaking.":"每天10分钟：读故事、做测验、练口语。",
+    "Complete free curriculum from zero. Beginning → Advanced.":"从零开始的完整免费课程。初级到高级。",
+    "Beginner A1 course with 17 practical scenarios. 15 min/day.":"A1初学者课程，17个实用场景。每天15分钟。",
+    "Gamified":"游戏化","Structured":"结构化","Immersive":"沉浸式","Speech AI":"语音AI",
+    "Community":"社区","CEFR":"欧洲语言标准","Live classes":"直播课","Video":"视频",
+    "Phoneme AI":"音素AI","Exam prep":"备考","1-on-1":"一对一","Tutors":"导师",
+    "On-demand":"按需","Native":"母语","Marketplace":"市场","Audio":"音频","Commute":"通勤",
+    "AI convo":"AI对话","Mobile":"移动端","SRS":"间隔重复","Free":"免费",
+    "Native video":"本地视频","AI writing":"AI写作","Flashcards":"闪卡","Grammar":"语法","Details":"细节",
+    "4 accents":"四种口音","Free 3/day":"每天免费3次","100+ scen.":"100+场景","Adaptive":"自适应",
+    "YouTube":"油管","Immersion":"沉浸","Natural chat":"自然对话","Business":"商务",
+    "10k+ activ.":"1万+活动","Import":"导入","British":"英式","American":"美式","2,500+":"超过2500",
+    "100% Free":"完全免费","No sign-up":"无需注册","Since 1997":"自1997","Daily":"每日",
+    "Course":"课程","3 levels":"3个级别","A1 beginner":"A1初学者","Scenarios":"场景",
+    "Visit":"访问","★ 9.5":"评分 9.5","★ 9.0":"评分 9.0","★ 8.8":"评分 8.8",
+    "★ 8.5":"评分 8.5","★ 8.3":"评分 8.3","★ 8.0":"评分 8.0",
+    "★ 9.3":"评分 9.3","★ 8.7":"评分 8.7","★ 8.4":"评分 8.4","★ 8.2":"评分 8.2",
+    "★ 8.1":"评分 8.1","★ 9.2":"评分 9.2","★ 8.6":"评分 8.6","★ 7.8":"评分 7.8",
+    "Shadow · AI-Powered English Learning · Built on the Shang Wenjie Method · Updated June 2026":"影子学习 · AI驱动的英语学习 · 基于尚雯婕方法 · 2026年6月更新",
+    "尚雯婕 Method":"尚雯婕方法"
+  };
+
+  // resource price & skill injection
+  var resInfo = {
+    "Duolingo":{p:"Free",s:["🎧","🗣️","📖","✍️"]},
+    "Babbel":{p:"$$",s:["📝","🗂️"]},
+    "Rosetta Stone":{p:"$$",s:["🗣️","🎧"]},
+    "Busuu":{p:"Free tier",s:["🎧","🗣️","📖"]},
+    "Lingoda":{p:"$$",s:["🗣️","🎧"]},
+    "Fluenz":{p:"$$",s:["📖","📝"]},
+    "ELSA Speak":{p:"Free tier",s:["🎯"]},
+    "iTalki":{p:"$$",s:["🗣️"]},
+    "Cambly":{p:"$$",s:["🗣️"]},
+    "Preply":{p:"$$",s:["🗣️"]},
+    "Pimsleur":{p:"$$",s:["🎧","🗣️"]},
+    "Speak":{p:"$$",s:["🗣️"]},
+    "Anki":{p:"Free",s:["🗂️"]},
+    "Memrise":{p:"Free tier",s:["🗂️","🎧"]},
+    "Grammarly":{p:"Free tier",s:["✍️","📝"]},
+    "Quizlet":{p:"Free",s:["🗂️"]},
+    "LingoDeer":{p:"$$",s:["📝","🗂️"]},
+    "SpeakShark":{p:"Free tier",s:["🗣️","🎯"]},
+    "TalkPal":{p:"$$",s:["🗣️"]},
+    "Jolii AI":{p:"$$",s:["🎧","🗂️"]},
+    "Fluently":{p:"$$",s:["🗣️"]},
+    "Listen & Learn":{p:"$$",s:["🎧","🗣️"]},
+    "British Council":{p:"Free",s:["🎧","📖"]},
+    "LingQ":{p:"$$",s:["📖","🎧"]},
+    "BBC Learning":{p:"Free",s:["🎧","📖"]},
+    "VOA Learning":{p:"Free",s:["🎧","📖"]},
+    "ESL Fast":{p:"Free",s:["🎧","📖"]},
+    "Lexinglo":{p:"Free",s:["🎧","📖","🗣️"]},
+    "EnglishClub":{p:"Free",s:["📖","📝"]},
+    "Free Daily English":{p:"Free",s:["📖","🎧","🗣️"]},
+    "Passport to English":{p:"Free",s:["📖","🎧"]},
+    "Loecsen":{p:"Free",s:["🗣️","🗂️"]}
+  };
+  document.querySelectorAll('.card').forEach(function(card) {
+    var nameEl = card.querySelector('.card-name');
+    if (!nameEl) return;
+    var name = nameEl.textContent.trim();
+    var info = resInfo[name];
+    if (!info) return;
+    var tagWrap = card.querySelector('[class*="card-tag"]') ? card.querySelector('[class*="card-tag"]').parentNode : null;
+    if (!tagWrap) return;
+    var pc = '';
+    if (info.p === 'Free') pc = 'price-free';
+    else if (info.p === 'Free tier') pc = 'price-trial';
+    else pc = 'price-paid';
+    var priceEl = document.createElement('span');
+    priceEl.className = 'card-tag ' + pc;
+    priceEl.textContent = info.p;
+    tagWrap.appendChild(priceEl);
+    info.s.forEach(function(skill) {
+      var s = document.createElement('span');
+      s.className = 'skill-pill';
+      s.textContent = skill;
+      tagWrap.appendChild(s);
+    });
+  });
+
+  // floating tooltip
+  var tp = document.createElement('div');
+  tp.className = 'tp';
+  document.body.appendChild(tp);
+  var tpTarget = null;
+
+  document.addEventListener('mouseover', function(e) {
+    var el = e.target.closest('[data-zh]');
+    if (el && el.dataset.zh) {
+      tp.textContent = el.dataset.zh;
+      tp.classList.add('show');
+      tpTarget = el;
+    }
+  });
+
+  document.addEventListener('mouseout', function(e) {
+    if (!e.target.closest('[data-zh]') || (e.relatedTarget && !e.relatedTarget.closest && !e.relatedTarget.closest('[data-zh]'))) {
+      tp.classList.remove('show');
+      tpTarget = null;
+    }
+  });
+
+  document.addEventListener('mousemove', function(e) {
+    if (tp.classList.contains('show')) {
+      var x = e.clientX + 14;
+      var y = e.clientY + 14;
+      var r = tp.getBoundingClientRect();
+      var tw = r.width || 0;
+      var th = r.height || 0;
+      if (x + tw > window.innerWidth - 10) x = window.innerWidth - tw - 10;
+      if (y + th > window.innerHeight - 10) y = e.clientY - th - 8;
+      tp.style.left = Math.max(4, x) + 'px';
+      tp.style.top = Math.max(4, y) + 'px';
+    }
+  });
+
+  // auto-apply data-zh from dictionary
+  function applyDict(el) {
+    var text = (el.childNodes.length === 1 && el.childNodes[0].nodeType === 3) ? el.childNodes[0].textContent.trim() : '';
+    if (text && dict[text] && !el.hasAttribute('data-zh')) {
+      el.setAttribute('data-zh', dict[text]);
+    }
+    for (var i = 0; i < el.children.length; i++) applyDict(el.children[i]);
+  }
+  applyDict(document.body);
+
+  // nav highlight
+  document.querySelectorAll('.nav-link').forEach(l => l.addEventListener('click', function() {
+    document.querySelectorAll('.nav-link').forEach(x => x.classList.remove('active'));
+    this.classList.add('active');
+  }));
+})();
+
+(function() {
+  /* === PROTECTION === */
+  var _ = {};
+
+  // 1. disable right-click
+  document.addEventListener('contextmenu', function(e) { e.preventDefault(); return false; });
+
+  // 2. disable keyboard shortcuts
+  document.addEventListener('keydown', function(e) {
+    if (
+      e.key === 'F12' ||
+      (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i' || e.key === 'J' || e.key === 'j' || e.key === 'C' || e.key === 'c')) ||
+      (e.ctrlKey && (e.key === 'U' || e.key === 'u' || e.key === 'S' || e.key === 's'))
+    ) {
+      e.preventDefault();
+      return false;
+    }
+  });
+
+  // 3. detect devtools via window size
+  var _check = function() {
+    var w = window.outerWidth - window.innerWidth > 160;
+    var h = window.outerHeight - window.innerHeight > 160;
+    if (w || h) _.flag = true;
+  };
+  _check();
+  window.addEventListener('resize', _check);
+
+  // 4. detect devtools via debugger
+  var _dbg = function() {
+    var start = performance.now();
+    debugger;
+    var end = performance.now();
+    if (end - start > 100) _.flag = true;
+  };
+  setInterval(_dbg, 800);
+
+  // 5. react to detection
+  setInterval(function() {
+    if (_.flag) {
+      try {
+        var _c = function() { console.log('%c⚠', 'font-size:100px'); console.clear(); _c(); };
+        _c();
+      } catch(e) {}
+      document.title = '⚠ Protected Content';
+      document.body.style.opacity = '0.3';
+      location.reload();
+    }
+  }, 500);
+
+  // 6. DOM integrity (periodic check)
+  setInterval(function() {
+    var tags = document.querySelectorAll('script, link, style');
+    var _hash = 0;
+    for (var i = 0; i < tags.length; i++) {
+      _hash += tags[i].outerHTML.length;
+    }
+    if (_hash < 1000) {
+      document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100vh;font-family:sans-serif;color:#333;"><p>Content integrity check failed.</p></div>';
+    }
+  }, 3000);
+})();
+</script>
+<!-- WM:Shadow -->
+</body>
+</html>
